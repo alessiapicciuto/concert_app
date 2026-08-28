@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "id": "1787937911661",
+    "name": "mario rossi",
+    "email": "mario.rossi@test.it",
+    "password": "password123"
+  },
+  {
+    "id": "1787938036949",
+    "name": "mario rossi",
+    "email": "mario@test.it",
+    "password": "password123"
+  }
+]

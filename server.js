@@ -1,33 +1,120 @@
 const express = require('express');
 const http = require('http');
-const { Server } = require('socket.io');
-const cors = require('cors');
+const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: '*' } });
-const PORT = 3000;
+const PORT = 3001;
 
-app.use(cors());
+// Middleware
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Rotta di test iniziale
-app.get('/api/status', (req, res) => {
-  res.json({ status: 'Server attivo e funzionante' });
+// Percorsi file JSON
+const USERS_FILE = path.join(__dirname, 'data', 'users.json');
+const TRIPS_FILE = path.join(__dirname, 'data', 'trips.json');
+const CONCERTS_FILE = path.join(__dirname, 'data', 'concerts.json');
+
+// Helper per leggere e scrivere JSON
+const readData = (filePath) => {
+  if (!fs.existsSync(filePath)) return [];
+  try {
+    const data = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(data || '[]');
+  } catch (err) {
+    return [];
+  }
+};
+
+const writeData = (filePath, data) => {
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+};
+
+// --- ROTTE AUTENTICAZIONE ---
+
+// 1. Registrazione
+app.post('/api/register', (req, res) => {
+  const { name, email, password } = req.body;
+  if (!name || !email || !password) {
+    return res.status(400).json({ message: 'Tutti i campi sono obbligatori.' });
+  }
+
+  const users = readData(USERS_FILE);
+  const existingUser = users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+
+  if (existingUser) {
+    return res.status(400).json({ message: 'Email già registrata.' });
+  }
+
+  const newUser = {
+    id: Date.now().toString(),
+    name,
+    email,
+    password
+  };
+
+  users.push(newUser);
+  writeData(USERS_FILE, users);
+
+  res.status(201).json({ message: 'Registrazione completata con successo!', user: newUser });
 });
 
-// Setup Socket.IO per la chat
-io.on('connection', (socket) => {
-  socket.on('join_trip', (tripId) => {
-    socket.join(tripId);
-  });
+// 2. Login
+app.post('/api/login', (req, res) => {
+  const { email, password } = req.body;
+  const users = readData(USERS_FILE);
+  const user = users.find((u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
 
-  socket.on('send_message', (data) => {
-    io.to(data.tripId).emit('receive_message', data);
-  });
+  if (!user) {
+    return res.status(401).json({ message: 'Credenziali non valide.' });
+  }
+
+  res.json({ message: 'Accesso eseguito con successo!', user });
 });
 
+// --- ROTTE VIAGGI (TRIPS) ---
+
+// 3. Ottieni tutti i viaggi
+app.get('/api/trips', (req, res) => {
+  const trips = readData(TRIPS_FILE);
+  res.json(trips);
+});
+
+// 4. Crea un nuovo viaggio
+app.post('/api/trips', (req, res) => {
+  const { driverId, driverName, concertName, departureCity, departureTime, availableSeats, pricePerSeat } = req.body;
+
+  if (!driverId || !concertName || !departureCity || !departureTime || !availableSeats || !pricePerSeat) {
+    return res.status(400).json({ message: 'Compila tutti i campi del viaggio.' });
+  }
+
+  const trips = readData(TRIPS_FILE);
+  const newTrip = {
+    id: Date.now().toString(),
+    driverId,
+    driverName,
+    concertName,
+    departureCity,
+    departureTime,
+    availableSeats: Number(availableSeats),
+    pricePerSeat: Number(pricePerSeat),
+    createdAt: new Date().toISOString()
+  };
+
+  trips.push(newTrip);
+  writeData(TRIPS_FILE, trips);
+
+  res.status(201).json({ message: 'Viaggio pubblicato con successo!', trip: newTrip });
+});
+
+// --- ROTTE CONCERTI ---
+app.get('/api/concerts', (req, res) => {
+  const concerts = readData(CONCERTS_FILE);
+  res.json(concerts);
+});
+
+// Avvio server
 server.listen(PORT, () => {
-  console.log(`Server avviato su http://localhost:${PORT}`);
+  console.log(`Server attivo su http://localhost:${PORT}`);
 });
