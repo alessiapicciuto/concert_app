@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ConcertBuddy - Accedi o Registrati</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .scheda-autenticazione {
+      background-color: #1e293b;
+      padding: 30px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #38bdf8;
+    }
+
+    .campo {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #334155;
+      background-color: #0f172a;
+      color: #ffffff;
+      font-size: 14px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #38bdf8;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #0284c7;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #0369a1;
+    }
+
+    .testo-cambio {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    .testo-cambio span {
+      color: #38bdf8;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    /* Classe usata in auth.js per nascondere o mostrare i form */
+    .hidden {
+      display: none;
+    }
+
+    .messaggio-errore {
+      color: #f87171;
+      font-size: 13px;
+      margin-top: 8px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="scheda-autenticazione">
+
+    <! LOGIN >
+    <div id="sezione-login">
+      <h2>Accedi</h2>
+      <form id="form-login">
+        <div class="campo">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" required placeholder="es.: mario.rossi@email.com">
+        </div>
+
+        <div class="campo">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" required placeholder=" ******">
+        </div>
+
+        <button type="submit">Entra</button>
+        <div id="errore-login" class="messaggio-errore"></div>
+      </form>
+
+      <div class="testo-cambio">
+        Non hai un account? <span id="passa-a-registrazione">Registrati</span>
+      </div>
+    </div>
+
+    <! SEZIONE di REGISTRAZIONE >
+    <div id="sezione-registrazione" class="hidden">
+      <h2>Registrati</h2>
+      <form id="form-registrazione">
+        <div class="campo">
+          <label for="reg-nome"> Nome </label>
+          <input type="text" id="reg-nome" required placeholder="es.: Mario Rossi">
+        </div>
+
+        <div class="campo">
+          <label for="reg-email">Email</label>
+          <input type="email" id="reg-email" required placeholder="es.: mario.rossi@email.com">
+        </div>
+
+        <div class="campo">
+          <label for="reg-password">Password</label>
+          <input type="password" id="reg-password" required placeholder="la password deve avere almeno 6 caratteri">
+        </div>
+
+        <button type="submit"> Crea Account</button>
+        <div id="errore-registrazione" class="messaggio-errore"></div>
+      </form>
+
+      <div class="testo-cambio">
+        Hai già un account? <span id="passa-a-login">Accedi</span>
+      </div>
+    </div>
+
+  </div>
+
+  <! collegamento a auth.js >
+  <script src="/js/auth.js"></script>
+</body>
+</html>
