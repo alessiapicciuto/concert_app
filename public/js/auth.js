@@ -48,10 +48,8 @@ formRegistrazione.addEventListener('submit', async (e) => {
 
     localStorage.setItem('currentUser', JSON.stringify(dati.user));
     alert('Registrazione completata con successo');
-    //prova per vedere se funziona il flusso 
-    //window.location.href = '/profilo.html';
-    // quando miri crea l'index metto questo e cnacello quello di sopra
-    window.location.href = '/';
+    window.location.href = '/profilo.html';
+  
   } catch (err) {
     erroreRegistrazione.textContent = 'Errore di connessione con il server';
   }
@@ -80,10 +78,7 @@ formAccesso.addEventListener('submit', async (e) => {
 
     localStorage.setItem('currentUser', JSON.stringify(dati.user));
     alert(`Bentornato, ${dati.user.name}!`);
-    // prova per controllare se funziona il flusso
-     //window.location.href = '/profilo.html';
-    // quando miri crea l'index metto questo e cnacello quello di sopra
-    window.location.href = '/';
+    window.location.href = '/profilo.html';
   } catch (err) {
     erroreAccesso.textContent = 'Errore di connessione con il server';
   }
