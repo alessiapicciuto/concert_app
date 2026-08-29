@@ -1,58 +1,105 @@
-// --- 1. Riferimenti agli elementi HTML ---
+// --- Riferimenti agli elementi HTML ---
 const formViaggio = document.getElementById('form-crea-viaggio');
-const messaggioErrore = document.getElementById('messaggio-errore');
+const inputConcerto = document.getElementById('scelta-concerto');
+const datalistConcerti = document.getElementById('lista-concerti');
+const btnToggleConcerti = document.getElementById('btn-toggle-concerti');
+const inputCitta = document.getElementById('citta-partenza');
+const inputOrario = document.getElementById('orario-partenza');
+const inputPosti = document.getElementById('posti-disponibili');
+const inputPrezzo = document.getElementById('prezzo-posto');
+const divMessaggio = document.getElementById('messaggio-errore');
+const btnSubmit = formViaggio.querySelector('button[type="submit"]');
+const titoloPagina = document.querySelector('.scheda-viaggio h2');
 
-// controllo utente connesso 
-const utenteSalvato = localStorage.getItem('currentUser');
-let utenteCorrente = null;
-
-if (!utenteSalvato) {
-  alert('Devi aver effettuato l\'accesso per offrire un passaggio.');
-  window.location.href = '/login.html';
-} else {
-  utenteCorrente = JSON.parse(utenteSalvato);
+if (btnToggleConcerti) {
+  btnToggleConcerti.addEventListener('click', () => {
+    inputConcerto.focus();
+    if (inputConcerto.value === '') {
+      inputConcerto.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  });
 }
 
-// invio form per creare il viaggio 
+if (datalistConcerti) {
+  fetch('/api/concerts')
+    .then((res) => res.json())
+    .then((concerti) => {
+      datalistConcerti.innerHTML = '';
+      concerti.forEach((concerto) => {
+        const option = document.createElement('option');
+        option.value = concerto.name || concerto.title || concerto.artist;
+        datalistConcerti.appendChild(option);
+      });
+    })
+    .catch((err) => console.error('Errore nel caricamento dei concerti:', err));
+}
+
+// Controllo autenticazione
+const utenteSalvato = localStorage.getItem('currentUser');
+if (!utenteSalvato) {
+  alert('Devi essere autenticato per gestire un passaggio.');
+  window.location.href = '/login.html';
+}
+
+const utenteCorrente = JSON.parse(utenteSalvato);
+
+// Controlla se siamo in modalità modifica (presenza di ?editId nell'URL)
+const urlParams = new URLSearchParams(window.location.search);
+const editId = urlParams.get('editId');
+
+if (editId) {
+  titoloPagina.textContent = 'MODIFICA PASSAGGIO';
+  btnSubmit.textContent = 'SALVA MODIFICHE';
+
+  // Recupera i dati del viaggio da modificare e precompila i campi
+  fetch('/api/trips')
+    .then((res) => res.json())
+    .then((trips) => {
+      const viaggio = trips.find((t) => t.id === editId);
+      if (viaggio) {
+        inputConcerto.value = viaggio.concertName;
+        inputCitta.value = viaggio.departureCity;
+        inputOrario.value = viaggio.departureTime;
+        inputPosti.value = viaggio.availableSeats;
+        inputPrezzo.value = viaggio.pricePerSeat;
+      }
+    });
+}
+
+// Gestione invio form
 formViaggio.addEventListener('submit', async (e) => {
-  e.preventDefault(); // Evita il ricaricamento della pagina
+  e.preventDefault();
+  divMessaggio.textContent = '';
 
-  // Raccogliamo i valori inseriti nei campi
-  const concerto = document.getElementById('scelta-concerto').value;
-  const partenza = document.getElementById('citta-partenza').value;
-  const orario = document.getElementById('orario-partenza').value;
-  const posti = parseInt(document.getElementById('posti-disponibili').value, 10);
-  const prezzo = parseFloat(document.getElementById('prezzo-posto').value);
-
-  // oggetto con tutti i dati del nuovo viaggio
-  const nuovoViaggio = {
-    concertName: concerto,
-    driverId: utenteCorrente.id,
-    driverName: utenteCorrente.name,
-    departureCity: partenza,
-    departureTime: orario,
-    availableSeats: posti,
-    pricePerSeat: prezzo
+  const payload = {
+    concertName: inputConcerto.value.trim(),
+    departureCity: inputCitta.value.trim(),
+    departureTime: inputOrario.value,
+    availableSeats: Number(inputPosti.value),
+    pricePerSeat: Number(inputPrezzo.value),
+    driverId: utenteCorrente.id
   };
 
   try {
-    const risposta = await fetch('/api/trips', {
-      method: 'POST',
+    const url = editId ? `/api/trips/${editId}` : '/api/trips';
+    const method = editId ? 'PUT' : 'POST';
+
+    const risposta = await fetch(url, {
+      method: method,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(nuovoViaggio)
+      body: JSON.stringify(payload)
     });
 
     const dati = await risposta.json();
 
     if (!risposta.ok) {
-      messaggioErrore.textContent = dati.message;
+      divMessaggio.textContent = dati.message || 'Errore durante il salvataggio.';
       return;
     }
 
-    alert('Viaggio pubblicato con successo');
-    formViaggio.reset(); // svuota i campi form
-    messaggioErrore.textContent = '';
+    alert(editId ? 'Viaggio modificato con successo!' : 'Passaggio pubblicato con successo!');
+    window.location.href = '/profilo.html';
   } catch (err) {
-    messaggioErrore.textContent = 'Errore durante la pubblicazione del viaggio';
+    divMessaggio.textContent = 'Errore di connessione con il server.';
   }
 });

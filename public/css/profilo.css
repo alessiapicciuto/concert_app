@@ -48,7 +48,7 @@ h3 {
   color: #ffffff;
 }
 
-/* Riquadro e pulsante centrato per il nuovo viaggio */
+/* nuovo viaggio */
 .box-nuovo-viaggio {
   margin-top: 20px;
   padding-top: 15px;
@@ -103,7 +103,47 @@ h3 {
   line-height: 1.5;
 }
 
-/* Sezione Disconnetti a fine pagina */
+/* Azioni modifica ed elimina */
+.azioni-viaggio {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.btn-modifica {
+  background-color: #f59e0b;
+  color: #ffffff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  width: auto;
+}
+
+.btn-modifica:hover {
+  background-color: #d97706;
+}
+
+.btn-elimina {
+  background-color: #ef4444;
+  color: #ffffff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  width: auto;
+}
+
+.btn-elimina:hover {
+  background-color: #dc2626;
+}
+
+/*  Disconnetti a fine pagina */
 .box-logout-bottom {
   display: flex;
   justify-content: center;

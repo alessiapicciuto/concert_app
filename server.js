@@ -60,6 +60,44 @@ app.post('/api/register', (req, res) => {
   res.status(201).json({ message: 'Registrazione completata con successo', user: newUser });
 });
 
+// elimina un viaggio
+app.delete('/api/trips/:id', (req, res) => {
+  const tripId = req.params.id;
+  let trips = readData(TRIPS_FILE);
+  
+  const tripIndex = trips.findIndex((t) => String(t.id) === String(tripId));
+  if (tripIndex === -1) {
+    return res.status(404).json({ message: 'Viaggio non trovato.' });
+  }
+
+  trips = trips.filter((t) => String(t.id) !== String(tripId));
+  writeData(TRIPS_FILE, trips);
+
+  res.json({ message: 'Viaggio eliminato con successo.' });
+});
+
+// modifica viaggio (aggiorna posti e prezzo)
+// Modifica un viaggio
+app.put('/api/trips/:id', (req, res) => {
+  const tripId = req.params.id;
+  const { concertName, departureCity, departureTime, availableSeats, pricePerSeat } = req.body;
+  const trips = readData(TRIPS_FILE);
+
+  const trip = trips.find((t) => String(t.id) === String(tripId));
+  if (!trip) {
+    return res.status(404).json({ message: 'Viaggio non trovato.' });
+  }
+
+  if (concertName !== undefined) trip.concertName = concertName;
+  if (departureCity !== undefined) trip.departureCity = departureCity;
+  if (departureTime !== undefined) trip.departureTime = departureTime;
+  if (availableSeats !== undefined) trip.availableSeats = Number(availableSeats);
+  if (pricePerSeat !== undefined) trip.pricePerSeat = Number(pricePerSeat);
+
+  writeData(TRIPS_FILE, trips);
+  res.json({ message: 'Viaggio modificato con successo.', trip });
+});
+
 // Login
 app.post('/api/login', (req, res) => {
   const { email, password } = req.body;

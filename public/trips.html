@@ -16,7 +16,13 @@
       <!--menu a tendina per scegliere il concerto --> 
       <div class="campo">
         <label for="scelta-concerto"> CONCERTO DI DESTINAZIONE </label>
-        <input type="text" id="scelta-concerto" required placeholder="es.: Dua Lipa">
+        <div class="input-con-freccia">
+          <input list="lista-concerti" id="scelta-concerto" required placeholder="Seleziona o digita il concerto...">
+          <button type="button" class="btn-apri-tendina" id="btn-toggle-concerti" title="Mostra concerti">&#9662;</button>
+        </div>
+        <datalist id="lista-concerti">
+          <!-- I concerti verranno caricati dinamicamente da JS -->
+        </datalist>
       </div>
 
       <!--città di partenza --> 
@@ -48,7 +54,7 @@
     </form>
 
     <div class="link-ritorno">
-      <a href="/profilo.html">&larr; Torna all'area personale </a>
+      <a href="/profilo.html">&larr; Torna all'area personale</a>
     </div>
   </div>
 
