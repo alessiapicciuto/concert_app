@@ -1,0 +1,211 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background-color: #0f172a;
+  color: #f8fafc;
+  padding: 30px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.contenitore-profilo {
+  width: 100%;
+  max-width: 600px;
+}
+
+.box-azioni-profilo {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.btn-azione {
+  display: inline-block;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: bold;
+  text-decoration: none;
+  text-align: center;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+  cursor: pointer;
+}
+
+.btn-azione:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Colori specifici per i tre bottoni */
+.btn-offri {
+  background-color: #0284c7; /* Azzurro */
+  color: #ffffff;
+}
+
+.btn-prenota {
+  background-color: #059669; /* Verde smeraldo */
+  color: #ffffff;
+}
+
+.btn-chat-main {
+  background-color: #7c3aed; /* Viola moderno */
+  color: #ffffff;
+}
+
+.scheda {
+  background-color: #1e293b;
+  padding: 25px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+h2 {
+  color: #38bdf8;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+h3 {
+  color: #f8fafc;
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+.info-riga {
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: #cbd5e1;
+}
+
+.info-riga strong {
+  color: #ffffff;
+}
+
+
+.box-nuovo-viaggio {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #334155;
+  display: flex;
+  justify-content: center;
+}
+
+.btn-nuovo-viaggio {
+  display: inline-block;
+  background-color: #0284c7;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 15px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  text-align: center;
+}
+
+.btn-nuovo-viaggio:hover {
+  background-color: #0369a1;
+  transform: translateY(-1px);
+}
+
+
+.lista-viaggi {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.scheda-viaggio-singolo {
+  background-color: #0f172a;
+  border: 1px solid #334155;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.titolo-concerto {
+  color: #38bdf8;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.dettagli-viaggio {
+  font-size: 13px;
+  color: #94a3b8;
+  line-height: 1.5;
+}
+
+
+.azioni-viaggio {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.btn-modifica {
+  background-color: #f59e0b;
+  color: #ffffff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  width: auto;
+}
+
+.btn-modifica:hover {
+  background-color: #d97706;
+}
+
+.btn-elimina {
+  background-color: #ef4444;
+  color: #ffffff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  width: auto;
+}
+
+.btn-elimina:hover {
+  background-color: #dc2626;
+}
+
+/*  Disconnetti a fine pagina */
+.box-logout-bottom {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
+.btn-logout {
+  background-color: #ef4444;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  max-width: 200px;
+  transition: background-color 0.2s ease;
+}
+
+.btn-logout:hover {
+  background-color: #dc2626;
+}

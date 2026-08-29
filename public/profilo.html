@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ConcertApp - Il Mio Profilo</title>
+  <link rel="stylesheet" href="/css/profilo.css">
+</head>
+<body>
+
+  <div class="contenitore-profilo">
+    
+    <!-- scheda informazioni utente -->
+    <div class="scheda">
+      <h2>AREA PERSONALE</h2>
+      <div class="info-riga"><strong>NOME:</strong> <span id="profilo-nome">-</span></div>
+      <div class="info-riga"><strong>EMAIL:</strong> <span id="profilo-email">-</span></div>
+      
+      <div class="box-azioni-profilo">
+        <a href="/trips.html" class="btn-azione btn-offri">OFFRI PASSAGGIO</a>
+        <a href="/index.html" class="btn-azione btn-prenota">CERCA E PRENOTA UN PASSAGGIO</a>
+        <a href="/chat.html" class="btn-azione btn-chat-main">CHAT </a>
+      </div>
+    </div>
+
+    <!-- elenco viaggi creati -->
+    <div class="scheda">
+      <h3>I MIEI VIAGGI PUBBLICATI</h3>
+      <div id="contenitore-miei-viaggi" class="lista-viaggi">
+        <p style="color: #94a3b8; font-size: 14px;">Caricamento viaggi in corso...</p>
+      </div>
+    </div>
+
+    <!-- elenco viaggi prenotati -->
+    <div class="scheda">
+      <h3>I MIEI VIAGGI PRENOTATI</h3>
+      <div id="contenitore-prenotazioni" class="lista-viaggi">
+        <p style="color: #94a3b8; font-size: 14px;">Caricamento prenotazioni in corso...</p>
+      </div>
+    </div>
+
+    <!-- Pulsante Disconnetti -->
+    <div class="box-logout-bottom">
+      <button id="btn-logout" class="btn-logout">DISCONNETTI</button>
+    </div>
+
+  </div>
+
+  <!-- Collegamento a profilojs -->
+  <script src="/js/profilo.js"></script>
+</body>
+</html>
