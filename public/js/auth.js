@@ -1,4 +1,3 @@
-// riferimenti a HTML
 const sezioneAccesso = document.getElementById('sezione-login');
 const sezioneRegistrazione = document.getElementById('sezione-registrazione');
 
@@ -49,7 +48,6 @@ formRegistrazione.addEventListener('submit', async (e) => {
     localStorage.setItem('currentUser', JSON.stringify(dati.user));
     alert('Registrazione completata con successo');
     window.location.href = '/profilo.html';
-  
   } catch (err) {
     erroreRegistrazione.textContent = 'Errore di connessione con il server';
   }

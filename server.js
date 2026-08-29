@@ -62,7 +62,7 @@ app.post('/api/register', (req, res) => {
   res.status(201).json({ message: 'Registrazione completata con successo', user: newUser });
 });
 
-// Login
+
 app.post('/api/login', (req, res) => {
   const { email, password } = req.body;
   const users = readData(USERS_FILE);
@@ -75,7 +75,7 @@ app.post('/api/login', (req, res) => {
   res.json({ message: 'Accesso eseguito con successo', user });
 });
 
-// ================= TRIPS (VIAGGI) =================
+
 
 // Elenco viaggi
 app.get('/api/trips', (req, res) => {
@@ -83,7 +83,7 @@ app.get('/api/trips', (req, res) => {
   res.json(trips);
 });
 
-// Crea nuovo viaggio
+
 app.post('/api/trips', (req, res) => {
   const { driverId, driverName, concertName, departureCity, departureTime, availableSeats, pricePerSeat } = req.body;
 
@@ -111,7 +111,7 @@ app.post('/api/trips', (req, res) => {
   res.status(201).json({ message: 'Viaggio pubblicato con successo', trip: newTrip });
 });
 
-// Modifica viaggio
+
 app.put('/api/trips/:id', (req, res) => {
   const tripId = req.params.id;
   const { concertName, departureCity, departureTime, availableSeats, pricePerSeat } = req.body;
@@ -132,7 +132,7 @@ app.put('/api/trips/:id', (req, res) => {
   res.json({ message: 'Viaggio modificato con successo.', trip });
 });
 
-// Elimina viaggio
+
 app.delete('/api/trips/:id', (req, res) => {
   const tripId = req.params.id;
   let trips = readData(TRIPS_FILE);
@@ -148,7 +148,7 @@ app.delete('/api/trips/:id', (req, res) => {
   res.json({ message: 'Viaggio eliminato' });
 });
 
-// Prenota un posto
+
 app.post('/api/trips/:id/book', (req, res) => {
   const tripId = req.params.id;
   const { userId, userName } = req.body;
@@ -186,7 +186,7 @@ app.post('/api/trips/:id/book', (req, res) => {
   res.json({ message: 'Prenotazione confermata!', trip });
 });
 
-// Annulla prenotazione
+
 app.post('/api/trips/:id/cancel-booking', (req, res) => {
   const tripId = req.params.id;
   const { userId } = req.body;
@@ -210,9 +210,7 @@ app.post('/api/trips/:id/cancel-booking', (req, res) => {
   res.json({ message: 'Prenotazione annullata' });
 });
 
-// ================= CONCERTI =================
 
-// Elenco tutti i concerti
 app.get('/api/concerts', (req, res) => {
   const concerts = readData(CONCERTS_FILE);
   res.json(concerts);
@@ -226,7 +224,7 @@ app.get('/api/concerts/:id', (req, res) => {
   res.json(concert);
 });
 
-// ================= REAL-TIME SOCKET.IO =================
+
 io.on('connection', (socket) => {
   socket.on('join_trip', (tripId) => {
     socket.join(tripId);
@@ -237,7 +235,7 @@ io.on('connection', (socket) => {
   });
 });
 
-// ================= AVVIO SERVER =================
+
 server.listen(PORT, () => {
   console.log(`Server attivo su http://localhost:${PORT}`);
 });
