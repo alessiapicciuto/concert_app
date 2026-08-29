@@ -2,9 +2,11 @@ const express = require('express');
 const http = require('http');
 const path = require('path');
 const fs = require('fs');
+const { Server } = require('socket.io');
 
 const app = express();
 const server = http.createServer(app);
+const io = new Server(server);
 const PORT = 3000;
 
 // Middleware
@@ -16,7 +18,7 @@ const USERS_FILE = path.join(__dirname, 'data', 'users.json');
 const TRIPS_FILE = path.join(__dirname, 'data', 'trips.json');
 const CONCERTS_FILE = path.join(__dirname, 'data', 'concerts.json');
 
-// Helper per leggere e scrivere JSON
+// Helper per leggere e scrivere JSON in modo sicuro
 const readData = (filePath) => {
   if (!fs.existsSync(filePath)) return [];
   try {
@@ -31,7 +33,7 @@ const writeData = (filePath, data) => {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
 };
 
-// AUTENTICAZIONE 
+// ================= AUTENTICAZIONE =================
 
 // Registrazione
 app.post('/api/register', (req, res) => {
@@ -73,15 +75,15 @@ app.post('/api/login', (req, res) => {
   res.json({ message: 'Accesso eseguito con successo', user });
 });
 
-// TRIPS
+// ================= TRIPS (VIAGGI) =================
 
-// elenco viaggi
+// Elenco viaggi
 app.get('/api/trips', (req, res) => {
   const trips = readData(TRIPS_FILE);
   res.json(trips);
 });
 
-// crea nuovo viaggio
+// Crea nuovo viaggio
 app.post('/api/trips', (req, res) => {
   const { driverId, driverName, concertName, departureCity, departureTime, availableSeats, pricePerSeat } = req.body;
 
@@ -177,7 +179,6 @@ app.post('/api/trips/:id/book', (req, res) => {
     return res.status(400).json({ message: 'Posti esauriti' });
   }
 
-  // Registra prenotazione e scala 1 posto
   trip.passengers.push({ userId, userName, bookedAt: new Date().toISOString() });
   trip.availableSeats -= 1;
 
@@ -206,16 +207,33 @@ app.post('/api/trips/:id/cancel-booking', (req, res) => {
   trip.availableSeats += 1;
 
   writeData(TRIPS_FILE, trips);
-  res.json({ message: 'Prenotazione annullata ' });
+  res.json({ message: 'Prenotazione annullata' });
 });
 
-// CONCERTI 
+// ================= CONCERTI =================
+
+// Elenco tutti i concerti
 app.get('/api/concerts', (req, res) => {
   const concerts = readData(CONCERTS_FILE);
   res.json(concerts);
 });
 
-// AVVIO SERVER 
+// Singolo concerto per ID
+app.get('/api/concerts/:id', (req, res) => {
+  const concerts = readData(CONCERTS_FILE);
+  const concert = concerts.find((c) => String(c.id) === String(req.params.id));
+  if (!concert) return res.status(404).json({ error: 'Concerto non trovato' });
+  res.json(concert);
+});
+
+// ================= REAL-TIME SOCKET.IO =================
+io.on('connection', (socket) => {
+  socket.on('join_trip', (tripId) => {
+    socket.join(tripId);
+  });
+});
+
+// ================= AVVIO SERVER =================
 server.listen(PORT, () => {
   console.log(`Server attivo su http://localhost:${PORT}`);
 });
