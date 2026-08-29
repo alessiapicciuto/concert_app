@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>ConcertBuddy - Catalogo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Catalogo Concerti</h1>
+  <input type="text" id="search" class="search-box" placeholder="Cerca per città o genere..." oninput="filterData()">
+  <div id="concertList" class="grid"></div>
+
+  <script>
+    let concerts = [];
+
+    async function getConcerts() {
+      const res = await fetch('/api/concerts');
+      concerts = await res.json();
+      render(concerts);
+    }
+
+    function render(list) {
+      document.getElementById('concertList').innerHTML = list.map(c => `
+        <div class="card">
+          <div>
+            <h3>${c.title}</h3>
+            <p> ${c.city} (${c.venue})</p>
+            <p> ${c.genre}</p>
+            <p> ${c.date}</p>
+          </div>
+          <a href="concert.html?id=${c.id}" class="btn">Vedi Dettagli e Chat</a>
+        </div>
+      `).join('');
+    }
+
+    function filterData() {
+      const query = document.getElementById('search').value.toLowerCase();
+      render(concerts.filter(c => 
+        c.city.toLowerCase().includes(query) || 
+        c.genre.toLowerCase().includes(query) ||
+        c.title.toLowerCase().includes(query)
+      ));
+    }
+
+    getConcerts();
+  </script>
+</body>
+</html> 

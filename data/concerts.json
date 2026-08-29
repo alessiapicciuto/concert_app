@@ -1,20 +1,74 @@
 [
   {
-    "id": 1,
-    "artist": "Coldplay",
-    "tour": "Music of the Spheres",
-    "city": "Milano",
-    "venue": "San Siro",
-    "date": "2026-06-25",
+    "id": "1",
+    "title": "Coldplay - Music of the Spheres",
+    "city": "Napoli",
+    "venue": "Stadio Diego Armando Maradona",
+    "date": "2026-11-15",
     "genre": "Pop/Rock"
   },
   {
-    "id": 2,
-    "artist": "Dua Lipa",
-    "tour": "Radical Optimism",
+    "id": "2",
+    "title": "Dua Lipa - Radical Optimism Tour",
+    "city": "Milano",
+    "venue": "Unipol Forum",
+    "date": "2026-10-05",
+    "genre": "Pop"
+  },
+  {
+    "id": "3",
+    "title": "Marracash - Palasport 2026",
+    "city": "Roma",
+    "venue": "Palazzo dello Sport",
+    "date": "2026-12-20",
+    "genre": "Rap"
+  },
+  {
+    "id": "4",
+    "title": "Imagine Dragons - Loom World Tour",
+    "city": "Torino",
+    "venue": "Inalpi Arena",
+    "date": "2026-11-28",
+    "genre": "Alternative Rock"
+  },
+  {
+    "id": "5",
+    "title": "Cesare Cremonini - Live 2026",
     "city": "Bologna",
     "venue": "Unipol Arena",
-    "date": "2026-07-10",
+    "date": "2026-12-04",
+    "genre": "Pop Italiano"
+  },
+  {
+    "id": "6",
+    "title": "Marco Mengoni - In Stadi & Palasport",
+    "city": "Firenze",
+    "venue": "Nelson Mandela Forum",
+    "date": "2027-01-18",
     "genre": "Pop"
+  },
+  {
+    "id": "7",
+    "title": "Pinguini Tattici Nucleari - Stadi 2026",
+    "city": "Verona",
+    "venue": "Arena di Verona",
+    "date": "2026-09-25",
+    "genre": "Indie Pop"
+  },
+  {
+    "id": "9",
+    "title": "Green Day - Saviors World Tour",
+    "city": "Milano",
+    "venue": "Ippodromo San Siro",
+    "date": "2026-10-18",
+    "genre": "Punk Rock"
+  },
+  {
+    "id": "10",
+    "title": "Annalisa - Tutti nel Vortex",
+    "city": "Padova",
+    "venue": "Kioene Arena",
+    "date": "2026-12-12",
+    "genre": "Pop/Dance"
   }
 ]
