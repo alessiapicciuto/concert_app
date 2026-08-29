@@ -4,103 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ConcertApp - Il Mio Profilo</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
-
-    body {
-      background-color: #0f172a;
-      color: #f8fafc;
-      padding: 30px 20px;
-      display: flex;
-      justify-content: center;
-    }
-
-    .contenitore-profilo {
-      width: 100%;
-      max-width: 600px;
-    }
-
-    .scheda {
-      background-color: #1e293b;
-      padding: 25px;
-      border-radius: 10px;
-      margin-bottom: 25px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-    }
-
-    .intestazione-utente {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-
-    h2 {
-      color: #38bdf8;
-    }
-
-    .btn-logout {
-      background-color: #ef4444;
-      color: #ffffff;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .btn-logout:hover {
-      background-color: #dc2626;
-    }
-
-    .info-riga {
-      margin-bottom: 8px;
-      font-size: 15px;
-      color: #cbd5e1;
-    }
-
-    .info-riga strong {
-      color: #ffffff;
-    }
-
-    .link-nuovo-viaggio {
-      display: inline-block;
-      margin-top: 10px;
-      color: #38bdf8;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    .lista-viaggi {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 15px;
-    }
-
-    .scheda-viaggio-singolo {
-      background-color: #0f172a;
-      border: 1px solid #334155;
-      padding: 15px;
-      border-radius: 8px;
-    }
-
-    .titolo-concerto {
-      color: #38bdf8;
-      font-size: 16px;
-      margin-bottom: 5px;
-    }
-
-    .dettagli-viaggio {
-      font-size: 13px;
-      color: #94a3b8;
-    }
-  </style>
+  <link rel="stylesheet" href="/css/profilo.css">
 </head>
 <body>
 
@@ -119,7 +23,7 @@
 
     <!--elenco viaggi creati -->
     <div class="scheda">
-      <h3>I MIEI VIAGGI PUGGLICATI </h3>
+      <h3>I MIEI VIAGGI PUBBLICATI </h3>
       <div id="contenitore-miei-viaggi" class="lista-viaggi">
         <p style="color: #94a3b8; font-size: 14px;">Caricamento viaggi in corso...</p>
       </div>
