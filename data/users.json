@@ -6,9 +6,15 @@
     "password": "password123"
   },
   {
-    "id": "1787938036949",
-    "name": "mario rossi",
-    "email": "mario@test.it",
-    "password": "password123"
+    "id": "1787999196968",
+    "name": "marta verdi",
+    "email": "martaverdi@test.it",
+    "password": "password132"
+  },
+  {
+    "id": "1787999401178",
+    "name": "giulia bianchi",
+    "email": "giuliabianchi@test.it",
+    "password": "password234"
   }
 ]

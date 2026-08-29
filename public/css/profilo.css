@@ -17,6 +17,47 @@ body {
   width: 100%;
   max-width: 600px;
 }
+/* Contenitore pulsanti principali affiancati */
+.box-azioni-profilo {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.btn-azione {
+  display: inline-block;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: bold;
+  text-decoration: none;
+  text-align: center;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+  cursor: pointer;
+}
+
+.btn-azione:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Colori specifici per i tre bottoni */
+.btn-offri {
+  background-color: #0284c7; /* Azzurro */
+  color: #ffffff;
+}
+
+.btn-prenota {
+  background-color: #059669; /* Verde smeraldo */
+  color: #ffffff;
+}
+
+.btn-chat-main {
+  background-color: #7c3aed; /* Viola moderno */
+  color: #ffffff;
+}
 
 .scheda {
   background-color: #1e293b;
