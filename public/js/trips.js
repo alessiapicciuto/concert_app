@@ -1,4 +1,4 @@
-// --- Riferimenti agli elementi HTML ---
+// Riferimenti agli elementi HTML
 const formViaggio = document.getElementById('form-crea-viaggio');
 const inputConcerto = document.getElementById('scelta-concerto');
 const datalistConcerti = document.getElementById('lista-concerti');
@@ -17,7 +17,6 @@ if (datalistConcerti) {
       datalistConcerti.innerHTML = '';
       concerti.forEach((concerto) => {
         const option = document.createElement('option');
-        // Usa direttamente la proprietà artist dal concerts.json
         option.value = concerto.artist || concerto.name || concerto.title;
         if (concerto.city) {
           option.textContent = `${concerto.artist} - ${concerto.city} (${concerto.tour || ''})`;

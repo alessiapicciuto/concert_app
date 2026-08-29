@@ -1,11 +1,11 @@
-// --- 1. Riferimenti agli elementi HTML ---
+// riferimenti agli elementi HTML 
 const campoNome = document.getElementById('profilo-nome');
 const campoEmail = document.getElementById('profilo-email');
 const contenitoreViaggi = document.getElementById('contenitore-miei-viaggi');
 const contenitorePrenotazioni = document.getElementById('contenitore-prenotazioni');
 const btnLogout = document.getElementById('btn-logout');
 
-// --- 2. Controllo Autenticazione ---
+// Controllo Autenticazione 
 const utenteSalvato = localStorage.getItem('currentUser');
 
 if (!utenteSalvato) {
@@ -17,13 +17,13 @@ if (!utenteSalvato) {
   campoNome.textContent = utenteCorrente.name;
   campoEmail.textContent = utenteCorrente.email;
 
-  // --- 3. Caricamento dei Viaggi e delle Prenotazioni ---
+  // Caricamento dei Viaggi e delle Prenotazioni
   async function caricaDatiProfilo() {
     try {
       const risposta = await fetch('/api/trips');
       const tuttiViaggi = await risposta.json();
 
-      // 3.1 Viaggi Offerti (Pubblicati) dall'utente
+      // Viaggi Pubblicati dall'utente
       const mieiViaggi = tuttiViaggi.filter((viaggio) => String(viaggio.driverId) === String(utenteCorrente.id));
 
       if (mieiViaggi.length === 0) {
@@ -50,7 +50,7 @@ if (!utenteSalvato) {
         });
       }
 
-      // 3.2 Viaggi Prenotati dall'utente (Lato Passeggero)
+      // Viaggi Prenotati dall'utente
       if (contenitorePrenotazioni) {
         const miePrenotazioni = tuttiViaggi.filter(
           (viaggio) => viaggio.passengers && viaggio.passengers.some((p) => String(p.userId) === String(utenteCorrente.id))
@@ -87,7 +87,7 @@ if (!utenteSalvato) {
     }
   }
 
-  // --- 4. Funzioni di Azione (Eliminazione e Annullamento) ---
+  // Funzioni elimina e modifica prenotazione
   window.eliminaViaggio = async function(id) {
     if (!confirm('Sei sicuro di voler eliminare questo viaggio?')) return;
 
@@ -120,7 +120,7 @@ if (!utenteSalvato) {
 
   caricaDatiProfilo();
 
-  // --- 5. Gestione Logout ---
+  // Gestione Logout
   btnLogout.addEventListener('click', () => {
     localStorage.removeItem('currentUser');
     alert('Disconnessione effettuata con successo.');

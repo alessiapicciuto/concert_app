@@ -31,7 +31,7 @@ const writeData = (filePath, data) => {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
 };
 
-// ================= AUTENTICAZIONE =================
+// AUTENTICAZIONE 
 
 // Registrazione
 app.post('/api/register', (req, res) => {
@@ -73,15 +73,15 @@ app.post('/api/login', (req, res) => {
   res.json({ message: 'Accesso eseguito con successo', user });
 });
 
-// ================= TRIPS (VIAGGI) =================
+// TRIPS
 
-// Tutti i viaggi
+// elenco viaggi
 app.get('/api/trips', (req, res) => {
   const trips = readData(TRIPS_FILE);
   res.json(trips);
 });
 
-// Nuovo viaggio
+// crea nuovo viaggio
 app.post('/api/trips', (req, res) => {
   const { driverId, driverName, concertName, departureCity, departureTime, availableSeats, pricePerSeat } = req.body;
 
@@ -109,7 +109,7 @@ app.post('/api/trips', (req, res) => {
   res.status(201).json({ message: 'Viaggio pubblicato con successo', trip: newTrip });
 });
 
-// Modifica un viaggio
+// Modifica viaggio
 app.put('/api/trips/:id', (req, res) => {
   const tripId = req.params.id;
   const { concertName, departureCity, departureTime, availableSeats, pricePerSeat } = req.body;
@@ -130,7 +130,7 @@ app.put('/api/trips/:id', (req, res) => {
   res.json({ message: 'Viaggio modificato con successo.', trip });
 });
 
-// Elimina un viaggio
+// Elimina viaggio
 app.delete('/api/trips/:id', (req, res) => {
   const tripId = req.params.id;
   let trips = readData(TRIPS_FILE);
@@ -143,23 +143,23 @@ app.delete('/api/trips/:id', (req, res) => {
   trips = trips.filter((t) => String(t.id) !== String(tripId));
   writeData(TRIPS_FILE, trips);
 
-  res.json({ message: 'Viaggio eliminato con successo.' });
+  res.json({ message: 'Viaggio eliminato' });
 });
 
-// 1. Prenota un posto
+// Prenota un posto
 app.post('/api/trips/:id/book', (req, res) => {
   const tripId = req.params.id;
   const { userId, userName } = req.body;
 
   if (!userId || !userName) {
-    return res.status(400).json({ message: 'Dati utente mancanti.' });
+    return res.status(400).json({ message: 'Dati utente mancanti' });
   }
 
   let trips = readData(TRIPS_FILE);
   const trip = trips.find((t) => String(t.id) === String(tripId));
 
   if (!trip) {
-    return res.status(404).json({ message: 'Viaggio non trovato.' });
+    return res.status(404).json({ message: 'Viaggio non trovato' });
   }
 
   if (String(trip.driverId) === String(userId)) {
@@ -170,11 +170,11 @@ app.post('/api/trips/:id/book', (req, res) => {
 
   const giaPrenotato = trip.passengers.some((p) => String(p.userId) === String(userId));
   if (giaPrenotato) {
-    return res.status(400).json({ message: 'Hai già prenotato questo passaggio.' });
+    return res.status(400).json({ message: 'Hai già prenotato questo passaggio' });
   }
 
   if (trip.availableSeats <= 0) {
-    return res.status(400).json({ message: 'Posti esauriti.' });
+    return res.status(400).json({ message: 'Posti esauriti' });
   }
 
   // Registra prenotazione e scala 1 posto
@@ -182,10 +182,10 @@ app.post('/api/trips/:id/book', (req, res) => {
   trip.availableSeats -= 1;
 
   writeData(TRIPS_FILE, trips);
-  res.json({ message: 'Prenotazione confermata con successo!', trip });
+  res.json({ message: 'Prenotazione confermata!', trip });
 });
 
-// 2. Annulla prenotazione
+// Annulla prenotazione
 app.post('/api/trips/:id/cancel-booking', (req, res) => {
   const tripId = req.params.id;
   const { userId } = req.body;
@@ -194,28 +194,28 @@ app.post('/api/trips/:id/cancel-booking', (req, res) => {
   const trip = trips.find((t) => String(t.id) === String(tripId));
 
   if (!trip || !trip.passengers) {
-    return res.status(404).json({ message: 'Prenotazione non trovata.' });
+    return res.status(404).json({ message: 'Prenotazione non trovata' });
   }
 
   const index = trip.passengers.findIndex((p) => String(p.userId) === String(userId));
   if (index === -1) {
-    return res.status(400).json({ message: 'Non risulti tra i passeggeri.' });
+    return res.status(400).json({ message: 'Non risulti tra i passeggeri' });
   }
 
   trip.passengers.splice(index, 1);
   trip.availableSeats += 1;
 
   writeData(TRIPS_FILE, trips);
-  res.json({ message: 'Prenotazione annullata con successo.' });
+  res.json({ message: 'Prenotazione annullata ' });
 });
 
-// ================= CONCERTI =================
+// CONCERTI 
 app.get('/api/concerts', (req, res) => {
   const concerts = readData(CONCERTS_FILE);
   res.json(concerts);
 });
 
-// ================= AVVIO SERVER =================
+// AVVIO SERVER 
 server.listen(PORT, () => {
   console.log(`Server attivo su http://localhost:${PORT}`);
 });

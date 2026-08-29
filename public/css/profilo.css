@@ -17,7 +17,7 @@ body {
   width: 100%;
   max-width: 600px;
 }
-/* Contenitore pulsanti principali affiancati */
+
 .box-azioni-profilo {
   display: flex;
   justify-content: center;
@@ -89,7 +89,7 @@ h3 {
   color: #ffffff;
 }
 
-/* nuovo viaggio */
+
 .box-nuovo-viaggio {
   margin-top: 20px;
   padding-top: 15px;
@@ -117,7 +117,7 @@ h3 {
   transform: translateY(-1px);
 }
 
-/* Lista schede viaggio */
+
 .lista-viaggi {
   display: flex;
   flex-direction: column;
@@ -144,7 +144,7 @@ h3 {
   line-height: 1.5;
 }
 
-/* Azioni modifica ed elimina */
+
 .azioni-viaggio {
   margin-top: 12px;
   display: flex;

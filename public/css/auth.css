@@ -85,7 +85,6 @@ button:hover {
   text-decoration: underline;
 }
 
-/* Classe usata in auth.js per nascondere o mostrare i form */
 .hidden {
   display: none;
 }
