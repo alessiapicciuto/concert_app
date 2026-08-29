@@ -6,9 +6,19 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Catalogo Concerti</h1>
-  <input type="text" id="search" class="search-box" placeholder="Cerca per città o genere..." oninput="filterData()">
-  <div id="concertList" class="grid"></div>
+
+  <!-- Intestazione con pulsante di collegamento all'Area Personale -->
+  <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin: 20px auto 15px auto; padding: 0 10px;">
+    <h1 style="margin: 0; color: #38bdf8;">CATALOGO CONCERTI</h1>
+    <a href="login.html" style="background-color: #0284c7; color: white; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px;">
+       Accedi / Area Personale
+    </a>
+  </div>
+
+  <div style="max-width: 1000px; margin: 0 auto; padding: 0 10px;">
+    <input type="text" id="search" class="search-box" placeholder="Cerca per città o genere..." oninput="filterData()">
+    <div id="concertList" class="grid"></div>
+  </div>
 
   <script>
     let concerts = [];
@@ -24,9 +34,9 @@
         <div class="card">
           <div>
             <h3>${c.title}</h3>
-            <p> ${c.city} (${c.venue})</p>
-            <p> ${c.genre}</p>
-            <p> ${c.date}</p>
+            <p> <b>Luogo:</b> ${c.city} (${c.venue})</p>
+            <p> <b>Genere:</b> ${c.genre}</p>
+            <p> <b>Data:</b> ${c.date}</p>
           </div>
           <a href="concert.html?id=${c.id}" class="btn">Vedi Dettagli e Chat</a>
         </div>
@@ -45,4 +55,4 @@
     getConcerts();
   </script>
 </body>
-</html> 
+</html>

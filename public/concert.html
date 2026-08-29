@@ -1,88 +1,87 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <title>Dettaglio & Chat</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="/socket.io/socket.io.js"></script>
+ <meta charset="UTF-8">
+ <title>Dettaglio & Chat</title>
+ <link rel="stylesheet" href="style.css">
+ <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
-  <a href="index.html" class="back-link">← Torna al catalogo</a>
-  
-  <div id="detail" class="header-card"></div>
+ <a href="index.html" class="back-link">← Torna al catalogo</a>
+ 
+ <div id="detail" class="header-card"></div>
 <div class="header-card" style="margin-top: 15px;">
-  <h3 style="margin-top:0; color: #38bdf8;"> Viaggi e Passaggi Disponibili</h3>
-  <div id="tripsList">
-    <p style="color: #aaa;">Caricamento viaggi...</p>
-  </div>
+ <h3 style="margin-top:0; color: #38bdf8;"> Viaggi e Passaggi Disponibili</h3>
+ <div id="tripsList">
+ <p style="color: #aaa;">Caricamento viaggi...</p>
+ </div>
 </div>
-  
-  <div class="chat-container">
-    <h3 style="margin-top:0; color: #38bdf8;"> Chat di Gruppo</h3>
-    <div id="chatBox" class="chat-box"></div>
-    
-    <div class="chat-input-group">
-      <input type="text" id="msgText" placeholder="Scrivi un messaggio..." onkeyup="if(event.key === 'Enter') sendMsg()">
-      <button onclick="sendMsg()">Invia</button>
-    </div>
-  </div>
+ 
+ <div class="chat-container">
+ <h3 style="margin-top:0; color: #38bdf8;"> Chat di Gruppo</h3>
+ <div id="chatBox" class="chat-box"></div>
+ 
+ <div class="chat-input-group">
+ <input type="text" id="msgText" placeholder="Scrivi un messaggio..." onkeyup="if(event.key === 'Enter') sendMsg()">
+ <button onclick="sendMsg()">Invia</button>
+ </div>
+ </div>
 
-  <script>
-    const socket = io();
-    const concertId = new URLSearchParams(window.location.search).get('id');
-    const tripId = `trip_${concertId}`;
+ <script>
+ const socket = io();
+ const concertId = new URLSearchParams(window.location.search).get('id');
+ const tripId = `trip_${concertId}`;
 
-    fetch(`/api/concerts/${concertId}`)
-      .then(res => res.json())
-      .then(c => {
-        document.getElementById('detail').innerHTML = `
-          <h1>${c.title}</h1>
-          <p> <b>Luogo:</b> ${c.city} (${c.venue})</p>
-          <p> <b>Data:</b> ${c.date} | <b>Genere:</b> ${c.genre}</p>
-        `;
-      });
+ fetch(`/api/concerts/${concertId}`)
+ .then(res => res.json())
+ .then(c => {
+ document.getElementById('detail').innerHTML = `
+ <h1>${c.title}</h1>
+ <p> <b>Luogo:</b> ${c.city} (${c.venue})</p>
+ <p> <b>Data:</b> ${c.date} | <b>Genere:</b> ${c.genre}</p>
+ `;
+ });
 
-      fetch('/api/trips')
-      .then(res => res.json())
-      .then(trips => {
-        const concertTrips = trips.filter(t => t.concertId == concertId);
-        const container = document.getElementById('tripsList');
-        
-        if (concertTrips.length === 0) {
-          container.innerHTML = '<p style="color:#aaa;">Nessun passaggio ancora offerto per questo concerto.</p>';
-          return;
-        }
+ fetch('/api/trips')
+ .then(res => res.json())
+ .then(trips => {
+ const concertTrips = trips.filter(t => t.concertId == concertId);
+ const container = document.getElementById('tripsList');
+ if (concertTrips.length === 0) {
+ container.innerHTML = '<p style="color:#aaa;">Nessun passaggio ancora offerto per questo concerto.</p>';
+ return;
+ }
 
-        container.innerHTML = concertTrips.map(t => `
-          <div style="border-bottom: 1px solid #333; padding: 8px 0;">
-            <p><b>Partenza da:</b> ${t.fromCity} | <b>Posti:</b> ${t.availableSeats} | <b>Costo:</b> ${t.price}€</p>
-          </div>
-        `).join('');
-      })
-      .catch(() => {
-        // Se la rotta /api/trips non esiste ancora, mostra il messaggio di default
-        document.getElementById('tripsList').innerHTML = '<p style="color:#aaa;">Nessun passaggio ancora offerto per questo concerto.</p>';
-      });
+ container.innerHTML = concertTrips.map(t => `
+ <div style="border-bottom: 1px solid #333; padding: 8px 0;">
+ <p><b>Partenza da:</b> ${t.fromCity} | <b>Posti:</b> ${t.availableSeats} | <b>Costo:</b> ${t.price}€</p>
+ </div>
+ `).join('');
+ })
+ .catch(() => {
+ // Se la rotta /api/trips non esiste ancora, mostra il messaggio di default
+ document.getElementById('tripsList').innerHTML = '<p style="color:#aaa;">Nessun passaggio ancora offerto per questo concerto.</p>';
+ });
 
-    socket.emit('join_trip', tripId);
+ socket.emit('join_trip', tripId);
 
-    socket.on('receive_message', data => {
-      document.getElementById('chatBox').innerHTML += `<p><b style="color:#38bdf8">${data.sender}:</b> ${data.text}</p>`;
-      const box = document.getElementById('chatBox');
-      box.scrollTop = box.scrollHeight;
-    });
+ socket.on('receive_message', data => {
+ document.getElementById('chatBox').innerHTML += `<p><b style="color:#38bdf8">${data.sender}:</b> ${data.text}</p>`;
+ const box = document.getElementById('chatBox');
+ box.scrollTop = box.scrollHeight;
+ });
 
-    function sendMsg() {
-      const input = document.getElementById('msgText');
-      if (!input.value.trim()) return;
-      
-      socket.emit('send_message', { 
-        tripId: tripId, 
-        sender: 'Utente', 
-        text: input.value 
-      });
-      input.value = '';
-    }
-  </script>
+ function sendMsg() {
+ const input = document.getElementById('msgText');
+ if (!input.value.trim()) return;
+ 
+ socket.emit('send_message', { 
+ tripId: tripId, 
+ sender: 'Utente', 
+ text: input.value 
+ });
+ input.value = '';
+}
+ </script>
 </body>
-</html>
+</html> 
