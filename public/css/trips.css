@@ -90,16 +90,6 @@ button:hover {
   color: #38bdf8;
   text-decoration: none;
 }
-/* Contenitore con freccia a destra */
-.input-con-freccia {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.input-con-freccia input {
-  padding-right: 40px; /* Spazio per non sovrapporre testo e freccia */
-}
 
 .btn-apri-tendina {
   position: absolute;

@@ -2,7 +2,6 @@
 const formViaggio = document.getElementById('form-crea-viaggio');
 const inputConcerto = document.getElementById('scelta-concerto');
 const datalistConcerti = document.getElementById('lista-concerti');
-const btnToggleConcerti = document.getElementById('btn-toggle-concerti');
 const inputCitta = document.getElementById('citta-partenza');
 const inputOrario = document.getElementById('orario-partenza');
 const inputPosti = document.getElementById('posti-disponibili');
@@ -11,15 +10,6 @@ const divMessaggio = document.getElementById('messaggio-errore');
 const btnSubmit = formViaggio.querySelector('button[type="submit"]');
 const titoloPagina = document.querySelector('.scheda-viaggio h2');
 
-if (btnToggleConcerti) {
-  btnToggleConcerti.addEventListener('click', () => {
-    inputConcerto.focus();
-    if (inputConcerto.value === '') {
-      inputConcerto.dispatchEvent(new Event('input', { bubbles: true }));
-    }
-  });
-}
-
 if (datalistConcerti) {
   fetch('/api/concerts')
     .then((res) => res.json())
@@ -27,7 +17,11 @@ if (datalistConcerti) {
       datalistConcerti.innerHTML = '';
       concerti.forEach((concerto) => {
         const option = document.createElement('option');
-        option.value = concerto.name || concerto.title || concerto.artist;
+        // Usa direttamente la proprietà artist dal concerts.json
+        option.value = concerto.artist || concerto.name || concerto.title;
+        if (concerto.city) {
+          option.textContent = `${concerto.artist} - ${concerto.city} (${concerto.tour || ''})`;
+        }
         datalistConcerti.appendChild(option);
       });
     })
@@ -55,7 +49,7 @@ if (editId) {
   fetch('/api/trips')
     .then((res) => res.json())
     .then((trips) => {
-      const viaggio = trips.find((t) => t.id === editId);
+      const viaggio = trips.find((t) => String(t.id) === String(editId));
       if (viaggio) {
         inputConcerto.value = viaggio.concertName;
         inputCitta.value = viaggio.departureCity;
@@ -77,7 +71,8 @@ formViaggio.addEventListener('submit', async (e) => {
     departureTime: inputOrario.value,
     availableSeats: Number(inputPosti.value),
     pricePerSeat: Number(inputPrezzo.value),
-    driverId: utenteCorrente.id
+    driverId: utenteCorrente.id,
+    driverName: utenteCorrente.name
   };
 
   try {
