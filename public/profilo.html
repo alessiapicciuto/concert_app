@@ -10,28 +10,34 @@
 
   <div class="contenitore-profilo">
     
-    <!--scheda informazioni utente -->
+    <!-- Scheda informazioni utente -->
     <div class="scheda">
-      <div class="intestazione-utente">
-        <h2>AREA PERSONALE</h2>
-        <button id="btn-logout" class="btn-logout"> DISCONNETTI</button>
-      </div>
+      <h2>AREA PERSONALE</h2>
       <div class="info-riga"><strong>NOME:</strong> <span id="profilo-nome">-</span></div>
       <div class="info-riga"><strong>EMAIL:</strong> <span id="profilo-email">-</span></div>
-      <a href="/trips.html" class="link-nuovo-viaggio">+ OFFRI NUOVO PASSAGGIO</a>
+      
+      <!-- Box pulsante centrale per nuovo passaggio -->
+      <div class="box-nuovo-viaggio">
+        <a href="/trips.html" class="btn-nuovo-viaggio">OFFRI NUOVO PASSAGGIO</a>
+      </div>
     </div>
 
-    <!--elenco viaggi creati -->
+    <!-- Elenco viaggi creati -->
     <div class="scheda">
-      <h3>I MIEI VIAGGI PUBBLICATI </h3>
+      <h3>I MIEI VIAGGI PUBBLICATI</h3>
       <div id="contenitore-miei-viaggi" class="lista-viaggi">
         <p style="color: #94a3b8; font-size: 14px;">Caricamento viaggi in corso...</p>
       </div>
     </div>
 
+    <!-- Pulsante Disconnetti a fine pagina -->
+    <div class="box-logout-bottom">
+      <button id="btn-logout" class="btn-logout">DISCONNETTI</button>
+    </div>
+
   </div>
 
-  <!--collegamento a profilojs--> 
+  <!-- Collegamento a profilojs -->
   <script src="/js/profilo.js"></script>
 </body>
 </html>
