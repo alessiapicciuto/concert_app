@@ -18,7 +18,7 @@ const USERS_FILE = path.join(__dirname, 'data', 'users.json');
 const TRIPS_FILE = path.join(__dirname, 'data', 'trips.json');
 const CONCERTS_FILE = path.join(__dirname, 'data', 'concerts.json');
 
-// Helper per leggere e scrivere JSON in modo sicuro
+// Helper per leggere e scrivere JSON
 const readData = (filePath) => {
   if (!fs.existsSync(filePath)) return [];
   try {
@@ -230,6 +230,10 @@ app.get('/api/concerts/:id', (req, res) => {
 io.on('connection', (socket) => {
   socket.on('join_trip', (tripId) => {
     socket.join(tripId);
+  });
+
+  socket.on('send_message', (data) => {
+    io.to(data.tripId).emit('receive_message', data);
   });
 });
 
