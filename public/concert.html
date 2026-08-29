@@ -35,6 +35,7 @@
     const utenteSalvato = localStorage.getItem('currentUser');
     const utenteCorrente = utenteSalvato ? JSON.parse(utenteSalvato) : null;
 
+    // Caricamento Dettagli Concerto e Messaggi Salvati
     fetch(`/api/concerts/${concertId}`)
       .then(res => res.json())
       .then(c => {
@@ -43,6 +44,15 @@
           <p> <b>Luogo:</b> ${c.city} (${c.venue})</p>
           <p> <b>Data:</b> ${c.date} | <b>Genere:</b> ${c.genre}</p>
         `;
+
+        // Mostra i messaggi salvati in precedenza nel JSON del concerto
+        if (c.messages && c.messages.length > 0) {
+          const chatBox = document.getElementById('chatBox');
+          chatBox.innerHTML = c.messages.map(m => `
+            <p><b style="color:#38bdf8">${m.userName}:</b> ${m.text} <span style="font-size:10px; color:#94a3b8;">(${m.time})</span></p>
+          `).join('');
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }
 
         fetch('/api/trips')
         .then(res => res.json())
@@ -101,7 +111,6 @@
           }).join('');
         })
         .catch(() => {
-          // Se la rotta /api/trips non esiste ancora, mostra il messaggio di default
           document.getElementById('tripsList').innerHTML = '<p style="color:#aaa;">Nessun passaggio ancora offerto per questo concerto.</p>';
         });
       });
@@ -136,25 +145,54 @@
 
     socket.emit('join_trip', tripId);
 
+    // Ricezione messaggi in tempo reale via socket
     socket.on('receive_message', data => {
-      document.getElementById('chatBox').innerHTML += `<p><b style="color:#38bdf8">${data.sender}:</b> ${data.text}</p>`;
-      const box = document.getElementById('chatBox');
-      box.scrollTop = box.scrollHeight;
+      const chatBox = document.getElementById('chatBox');
+      chatBox.innerHTML += `<p><b style="color:#38bdf8">${data.sender}:</b> ${data.text} <span style="font-size:10px; color:#94a3b8;">(${data.time || ''})</span></p>`;
+      chatBox.scrollTop = chatBox.scrollHeight;
     });
 
-    function sendMsg() {
-      const input = document.getElementById('msgText');
-      if (!input.value.trim()) return;
-      
-      const mittente = utenteCorrente ? utenteCorrente.name : 'Utente';
+    // Invio del messaggio (salvataggio sul server + emissione socket)
+    // Invio del messaggio (salvataggio sul server + emissione socket)
+    async function sendMsg() {
+      // Controllo autenticazione: se non è loggato, blocca l'invio e manda al login
+      if (!utenteCorrente) {
+        alert('Effettua prima l\'accesso per partecipare alla chat.');
+        window.location.href = '/login.html';
+        return;
+      }
 
-      socket.emit('send_message', { 
-        tripId: tripId, 
-        sender: mittente, 
-        text: input.value 
-      });
-      input.value = '';
+      const input = document.getElementById('msgText');
+      const text = input.value.trim();
+      if (!text) return;
+      
+      const mittente = utenteCorrente.name;
+
+      try {
+        const res = await fetch(`/api/concerts/${concertId}/messages`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userName: mittente, text: text })
+        });
+
+        const data = await res.json();
+        
+        if (data.success) {
+          const timeNow = data.messages[data.messages.length - 1].time;
+          socket.emit('send_message', { 
+            tripId: tripId, 
+            sender: mittente, 
+            text: text,
+            time: timeNow
+          });
+
+          input.value = '';
+        }
+      } catch (err) {
+        console.error('Errore nell\'invio del messaggio', err);
+      }
     }
   </script>
 </body>
 </html>
+

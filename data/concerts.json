@@ -13,7 +13,19 @@
     "city": "Milano",
     "venue": "Unipol Forum",
     "date": "2026-10-05",
-    "genre": "Pop"
+    "genre": "Pop",
+    "messages": [
+      {
+        "userName": "mario rossi",
+        "text": "ciao !",
+        "time": "21:31"
+      },
+      {
+        "userName": "giulia bianchi",
+        "text": "ciao!!",
+        "time": "21:32"
+      }
+    ]
   },
   {
     "id": "3",

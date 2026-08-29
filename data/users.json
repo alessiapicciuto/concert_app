@@ -20,7 +20,7 @@
   {
     "id": "1788016778072",
     "name": "Mario Rossi",
-    "email": "mario.rossi@gmailc.om",
+    "email": "mario.rossi@gmail.com",
     "password": "poliba7"
   },
   {
@@ -34,5 +34,17 @@
     "name": "mario rossi",
     "email": "mario.rossi@gmail.com",
     "password": "poliba5"
+  },
+  {
+    "id": "1788021704919",
+    "name": "laura bianchi",
+    "email": "laura.bianchi@gmail.com",
+    "password": "laura"
+  },
+  {
+    "id": "1788025456365",
+    "name": "claudia rossi",
+    "email": "claudiarossi@gmail.com",
+    "password": "claudia"
   }
 ]

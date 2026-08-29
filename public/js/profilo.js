@@ -1,9 +1,7 @@
-// riferimenti agli elementi HTML 
 const campoNome = document.getElementById('profilo-nome');
 const campoEmail = document.getElementById('profilo-email');
 const contenitoreViaggi = document.getElementById('contenitore-miei-viaggi');
 const contenitorePrenotazioni = document.getElementById('contenitore-prenotazioni');
-const btnLogout = document.getElementById('btn-logout');
 
 // Controllo Autenticazione 
 const utenteSalvato = localStorage.getItem('currentUser');
@@ -119,11 +117,18 @@ if (!utenteSalvato) {
   };
 
   caricaDatiProfilo();
-
-  // Gestione Logout
-  btnLogout.addEventListener('click', () => {
-    localStorage.removeItem('currentUser');
-    alert('Disconnessione effettuata con successo.');
-    window.location.href = '/login.html';
-  });
 }
+
+// Gestione Logout (spostata fuori per sicurezza globale)
+document.addEventListener('DOMContentLoaded', () => {
+  const btnLogout = document.getElementById('btn-logout');
+  if (btnLogout) {
+    btnLogout.addEventListener('click', () => {
+      if (confirm('Sei sicuro di voler uscire?')) {
+        localStorage.removeItem('currentUser');
+        alert('Disconnessione effettuata con successo.');
+        window.location.href = '/login.html';
+      }
+    });
+  }
+});

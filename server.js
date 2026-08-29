@@ -224,6 +224,33 @@ app.get('/api/concerts/:id', (req, res) => {
   res.json(concert);
 });
 
+// Salva e restituisce i messaggi della chat per un concerto
+app.post('/api/concerts/:id/messages', (req, res) => {
+  const concertId = req.params.id;
+  const { userName, text } = req.body;
+
+  const concerts = readData(CONCERTS_FILE);
+  const concert = concerts.find((c) => String(c.id) === String(concertId));
+
+  if (!concert) {
+    return res.status(404).json({ message: 'Concerto non trovato' });
+  }
+
+  if (!concert.messages) {
+    concert.messages = [];
+  }
+
+  const newMessage = {
+    userName: userName || 'Utente',
+    text,
+    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  };
+
+  concert.messages.push(newMessage);
+  writeData(CONCERTS_FILE, concerts);
+
+  res.json({ success: true, messages: concert.messages });
+});
 
 io.on('connection', (socket) => {
   socket.on('join_trip', (tripId) => {

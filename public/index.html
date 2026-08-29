@@ -7,20 +7,75 @@
 </head>
 <body>
 
-  <!-- Intestazione con pulsante di collegamento all'Area Personale -->
+  <!-- Intestazione -->
   <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin: 20px auto 15px auto; padding: 0 10px;">
     <h1 style="margin: 0; color: #38bdf8;">CATALOGO CONCERTI</h1>
-    <a href="login.html" style="background-color: #0284c7; color: white; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px;">
-       Accedi / Area Personale
-    </a>
+    
+    <!-- Contenitore vuoto: il bottone verrà generato qui dal JavaScript -->
+    <div id="userMenu"></div>
   </div>
 
+  <!-- Contenuto Catalogo -->
   <div style="max-width: 1000px; margin: 0 auto; padding: 0 10px;">
     <input type="text" id="search" class="search-box" placeholder="Cerca per città o genere..." oninput="filterData()">
     <div id="concertList" class="grid"></div>
   </div>
 
   <script>
+    // --- 1. GESTIONE MENU UTENTE (LOGIN / TENDINA) ---
+    const userMenu = document.getElementById('userMenu');
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+    // Se l'utente è loggato, crea la tendina
+    if (currentUser) {
+      userMenu.innerHTML = `
+        <div class="dropdown">
+          <button onclick="toggleMenu(event)" class="dropdown-btn">
+            Ciao, ${currentUser.name} ▼
+          </button>
+          <div id="dropdownMenu" class="dropdown-content">
+            <a href="profilo.html">Area Personale</a>
+            <a href="#" onclick="logout()">Esci</a>
+          </div>
+        </div>
+      `;
+    } 
+    // Se non è loggato, crea il link semplice
+    else {
+      userMenu.innerHTML = `
+        <a href="login.html" class="dropdown-btn" style="text-decoration: none; display: inline-block;">
+          Accedi / Registrati
+        </a>
+      `;
+    }
+
+    // Apre/Chiude il menu a tendina
+    function toggleMenu(event) {
+      event.stopPropagation(); // Evita che il click chiuda subito il menu
+      document.getElementById("dropdownMenu").classList.toggle("show");
+    }
+
+    // Disconnette l'utente chiedendo prima conferma
+    function logout() {
+      if (confirm('Sei sicuro di voler uscire?')) {
+        localStorage.removeItem('currentUser');
+        window.location.reload();
+      }
+    }
+    
+
+    // Chiude il menu se clicchi in un punto qualsiasi fuori dalla tendina
+    window.onclick = function(event) {
+      const dropdowns = document.getElementsByClassName("dropdown-content");
+      for (let i = 0; i < dropdowns.length; i++) {
+        const openDropdown = dropdowns[i];
+        if (openDropdown.classList.contains('show')) {
+          openDropdown.classList.remove('show');
+        }
+      }
+    }
+
+    // --- 2. GESTIONE CATALOGO CONCERTI ---
     let concerts = [];
 
     async function getConcerts() {

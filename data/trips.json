@@ -48,9 +48,21 @@
     "concertName": "Dua Lipa",
     "departureCity": "milano",
     "departureTime": "12:23",
-    "availableSeats": 5,
+    "availableSeats": 3,
     "pricePerSeat": 12,
-    "createdAt": "2026-08-29T10:27:57.698Z"
+    "createdAt": "2026-08-29T10:27:57.698Z",
+    "passengers": [
+      {
+        "userId": "1788021704919",
+        "userName": "laura bianchi",
+        "bookedAt": "2026-08-29T16:43:04.777Z"
+      },
+      {
+        "userId": "1788025456365",
+        "userName": "claudia rossi",
+        "bookedAt": "2026-08-29T17:45:34.384Z"
+      }
+    ]
   },
   {
     "id": "1788013712160",
@@ -59,9 +71,57 @@
     "concertName": "Coldplay - Music of the Spheres",
     "departureCity": "bari",
     "departureTime": "15:30",
-    "availableSeats": 2,
+    "availableSeats": 1,
     "pricePerSeat": 15,
-    "passengers": [],
+    "passengers": [
+      {
+        "userId": "1788021704919",
+        "userName": "laura bianchi",
+        "bookedAt": "2026-08-29T16:42:15.961Z"
+      }
+    ],
     "createdAt": "2026-08-29T14:28:32.161Z"
+  },
+  {
+    "id": "1788021841485",
+    "driverId": "1788021704919",
+    "driverName": "laura bianchi",
+    "concertName": "Green Day - Saviors World Tour",
+    "departureCity": "torino",
+    "departureTime": "18:40",
+    "availableSeats": 2,
+    "pricePerSeat": 10,
+    "passengers": [
+      {
+        "userId": "1788020327043",
+        "userName": "mario rossi",
+        "bookedAt": "2026-08-29T17:31:18.232Z"
+      }
+    ],
+    "createdAt": "2026-08-29T16:44:01.485Z"
+  },
+  {
+    "id": "1788025619995",
+    "driverId": "1788025456365",
+    "driverName": "claudia rossi",
+    "concertName": "Cesare Cremonini - Live 2026",
+    "departureCity": "padova",
+    "departureTime": "15:55",
+    "availableSeats": 2,
+    "pricePerSeat": 11.5,
+    "passengers": [],
+    "createdAt": "2026-08-29T17:46:59.996Z"
+  },
+  {
+    "id": "1788029229952",
+    "driverId": "1787999401178",
+    "driverName": "giulia bianchi",
+    "concertName": "Marco Mengoni - In Stadi & Palasport",
+    "departureCity": "bari",
+    "departureTime": "12:45",
+    "availableSeats": 2,
+    "pricePerSeat": 25,
+    "passengers": [],
+    "createdAt": "2026-08-29T18:47:09.952Z"
   }
 ]
