@@ -96,7 +96,7 @@
             if (eAutista) {
               azioneHtml = '<span style="color: #94a3b8; font-style: italic;">Tuo passaggio</span>';
             } else if (giaPrenotato) {
-              azioneHtml = '<span style="color: #38bdf8; font-weight: bold;">Già Prenotato</span>';
+              azioneHtml = `<button onclick="annullaPassaggio('${t.id}')" style="background-color: #dc2626; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">Annulla Prenotazione</button>`;
             } else if (posti > 0) {
               azioneHtml = `<button onclick="prenotaPassaggio('${t.id}')" style="background-color: #059669; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">PRENOTA</button>`;
             } else {
@@ -121,7 +121,7 @@
         });
       });
 
-    async function prenotaPassaggio(idViaggio) {
+async function prenotaPassaggio(idViaggio) {
       if (!utenteCorrente) {
         alert('Effettua prima l\'accesso per prenotare un passaggio.');
         window.location.href = '/login.html';
@@ -142,16 +142,38 @@
         alert(data.message);
 
         if (res.ok) {
-          window.location.href = '/profilo.html';
+          window.location.reload();
         }
       } catch (err) {
         alert('Errore durante la prenotazione.');
       }
     }
 
+    async function annullaPassaggio(idViaggio) {
+      if (!confirm('Vuoi davvero annullare la prenotazione di questo passaggio?')) return;
+
+      try {
+        const res = await fetch(`/api/trips/${idViaggio}/cancel-booking`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: utenteCorrente.id
+          })
+        });
+
+        const data = await res.json();
+        alert(data.message);
+
+        if (res.ok) {
+          window.location.reload();
+        }
+      } catch (err) {
+        alert('Errore durante l\'annullamento.');
+      }
+    }
+
     socket.emit('join_trip', tripId);
 
-    // 2. MODIFICA: Ricezione messaggi in tempo reale (include controllo per il tasto Elimina)
     socket.on('receive_message', data => {
       const chatBox = document.getElementById('chatBox');
       let deleteBtn = '';
@@ -162,7 +184,6 @@
       chatBox.scrollTop = chatBox.scrollHeight;
     });
 
-    // Invio del messaggio
     async function sendMsg() {
       if (!utenteCorrente) {
         alert('Effettua prima l\'accesso per partecipare alla chat.');
@@ -187,7 +208,6 @@
         
         if (data.success) {
           const lastMsg = data.messages[data.messages.length - 1];
-          // 3. MODIFICA: Emette anche l'ID del messaggio tramite socket
           socket.emit('send_message', { 
             tripId: tripId, 
             sender: mittente, 
@@ -203,7 +223,6 @@
       }
     }
 
-    // 4. MODIFICA: Funzione per eliminare il messaggio e listener per farli sparire in tempo reale
     async function deleteMsg(msgId) {
       if (!confirm('Sei sicuro di voler eliminare questo messaggio?')) return;
 

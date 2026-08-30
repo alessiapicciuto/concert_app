@@ -13,7 +13,8 @@
     "city": "Milano",
     "venue": "Unipol Forum",
     "date": "2026-10-05",
-    "genre": "Pop"
+    "genre": "Pop",
+    "messages": []
   },
   {
     "id": "3",

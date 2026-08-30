@@ -8,7 +8,8 @@
     "departureTime": "18:54",
     "availableSeats": 6,
     "pricePerSeat": 11,
-    "createdAt": "2026-08-28T17:31:27.677Z"
+    "createdAt": "2026-08-28T17:31:27.677Z",
+    "passengers": []
   },
   {
     "id": "1787996530540",
@@ -39,7 +40,8 @@
     "departureTime": "11:00",
     "availableSeats": 2,
     "pricePerSeat": 12,
-    "createdAt": "2026-08-29T10:12:34.770Z"
+    "createdAt": "2026-08-29T10:12:34.770Z",
+    "passengers": []
   },
   {
     "id": "1787999277698",
@@ -48,7 +50,7 @@
     "concertName": "Dua Lipa",
     "departureCity": "milano",
     "departureTime": "12:23",
-    "availableSeats": 2,
+    "availableSeats": 3,
     "pricePerSeat": 12,
     "createdAt": "2026-08-29T10:27:57.698Z",
     "passengers": [
@@ -61,11 +63,6 @@
         "userId": "1788025456365",
         "userName": "claudia rossi",
         "bookedAt": "2026-08-29T17:45:34.384Z"
-      },
-      {
-        "userId": "1788020327043",
-        "userName": "mario rossi",
-        "bookedAt": "2026-08-30T10:53:44.610Z"
       }
     ]
   },
