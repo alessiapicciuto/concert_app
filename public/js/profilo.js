@@ -35,6 +35,7 @@ if (!utenteSalvato) {
             <div class="titolo-concerto"> CONCERTO: ${viaggio.concertName}</div>
             <div class="dettagli-viaggio">
               <p> PARTENZA DA: <strong>${viaggio.departureCity}</strong> </p>
+              <p> PUNTO DI RITROVO: <strong>${viaggio.meetingPoint || 'Da concordare'}</strong> </p>
               <p> ALLE ORE: <strong>${viaggio.departureTime}</strong> </p>
               <p> POSTI DISPONIBILI: <strong>${viaggio.availableSeats}</strong> </p>
               <p> PREZZO: <strong>€ ${viaggio.pricePerSeat}</strong> </p>
@@ -66,6 +67,7 @@ if (!utenteSalvato) {
               <div class="dettagli-viaggio">
                 <p> AUTISTA: <strong>${viaggio.driverName || 'Non specificato'}</strong> </p>
                 <p> PARTENZA DA: <strong>${viaggio.departureCity}</strong> </p>
+                <p> PUNTO DI RITROVO: <strong>${viaggio.meetingPoint || 'Da concordare'}</strong> </p>
                 <p> ALLE ORE: <strong>${viaggio.departureTime}</strong> </p>
                 <p> PREZZO: <strong>€ ${viaggio.pricePerSeat}</strong> </p>
               </div>

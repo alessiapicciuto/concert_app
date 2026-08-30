@@ -85,7 +85,7 @@ app.get('/api/trips', (req, res) => {
 
 
 app.post('/api/trips', (req, res) => {
-  const { driverId, driverName, concertName, departureCity, departureTime, availableSeats, pricePerSeat } = req.body;
+  const { driverId, driverName, concertName, departureCity, meetingPoint, departureTime, availableSeats, pricePerSeat } = req.body;
 
   if (!driverId || !concertName || !departureCity || !departureTime || !availableSeats || !pricePerSeat) {
     return res.status(400).json({ message: 'Compila tutti i campi del viaggio' });
@@ -98,6 +98,7 @@ app.post('/api/trips', (req, res) => {
     driverName,
     concertName,
     departureCity,
+    meetingPoint: meetingPoint || '',
     departureTime,
     availableSeats: Number(availableSeats),
     pricePerSeat: Number(pricePerSeat),
@@ -114,7 +115,7 @@ app.post('/api/trips', (req, res) => {
 
 app.put('/api/trips/:id', (req, res) => {
   const tripId = req.params.id;
-  const { concertName, departureCity, departureTime, availableSeats, pricePerSeat } = req.body;
+  const { concertName, departureCity, meetingPoint, departureTime, availableSeats, pricePerSeat } = req.body;
   const trips = readData(TRIPS_FILE);
 
   const trip = trips.find((t) => String(t.id) === String(tripId));
@@ -124,6 +125,7 @@ app.put('/api/trips/:id', (req, res) => {
 
   if (concertName !== undefined) trip.concertName = concertName;
   if (departureCity !== undefined) trip.departureCity = departureCity;
+  if (meetingPoint !== undefined) trip.meetingPoint = meetingPoint;
   if (departureTime !== undefined) trip.departureTime = departureTime;
   if (availableSeats !== undefined) trip.availableSeats = Number(availableSeats);
   if (pricePerSeat !== undefined) trip.pricePerSeat = Number(pricePerSeat);

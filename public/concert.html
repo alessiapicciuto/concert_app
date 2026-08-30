@@ -79,6 +79,7 @@
 
           container.innerHTML = concertTrips.map(t => {
             const citta = t.departureCity || t.fromCity || '-';
+            const puntodiritiro=t.meetingPoint || 'Da concordare';
             const prezzo = t.pricePerSeat || t.price || 0;
             const posti = t.availableSeats !== undefined ? t.availableSeats : 0;
             const autista = t.driverName || 'Autista';
@@ -100,7 +101,7 @@
             return `
               <div style="border-bottom: 1px solid #333; padding: 10px 0; display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                  <p style="margin: 2px 0;"><b>Partenza da:</b> ${citta} | <b>Autista:</b> ${autista}</p>
+                  <p style="margin: 2px 0;"><b>Partenza da:</b> ${citta} | <b>In:</b> ${puntodiritiro} | <b>Autista:</b> ${autista}</p>
                   <p style="margin: 2px 0;"><b>Posti:</b> ${posti} | <b>Costo:</b> ${prezzo}€</p>
                 </div>
                 <div>
