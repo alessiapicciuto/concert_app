@@ -45,12 +45,17 @@
           <p> <b>Data:</b> ${c.date} | <b>Genere:</b> ${c.genre}</p>
         `;
 
-        // Mostra i messaggi salvati in precedenza nel JSON del concerto
+        // 1. MODIFICA: Mostra i messaggi salvati aggiungendo l'ID e il tasto Elimina
         if (c.messages && c.messages.length > 0) {
           const chatBox = document.getElementById('chatBox');
-          chatBox.innerHTML = c.messages.map(m => `
-            <p><b style="color:#38bdf8">${m.userName}:</b> ${m.text} <span style="font-size:10px; color:#94a3b8;">(${m.time})</span></p>
-          `).join('');
+          chatBox.innerHTML = c.messages.map(m => {
+            let deleteBtn = '';
+            // Controlla se il messaggio è dell'utente corrente
+            if (utenteCorrente && m.userName === utenteCorrente.name) {
+              deleteBtn = `<button onclick="deleteMsg('${m.id}')" style="color: #ef4444; font-size: 12px; cursor: pointer; border: none; background: none; margin-left: 10px; font-weight: bold;">Elimina</button>`;
+            }
+            return `<p id="msg-${m.id}"><b style="color:#38bdf8">${m.userName}:</b> ${m.text} <span style="font-size:10px; color:#94a3b8;">(${m.time})</span> ${deleteBtn}</p>`;
+          }).join('');
           chatBox.scrollTop = chatBox.scrollHeight;
         }
 
@@ -145,17 +150,19 @@
 
     socket.emit('join_trip', tripId);
 
-    // Ricezione messaggi in tempo reale via socket
+    // 2. MODIFICA: Ricezione messaggi in tempo reale (include controllo per il tasto Elimina)
     socket.on('receive_message', data => {
       const chatBox = document.getElementById('chatBox');
-      chatBox.innerHTML += `<p><b style="color:#38bdf8">${data.sender}:</b> ${data.text} <span style="font-size:10px; color:#94a3b8;">(${data.time || ''})</span></p>`;
+      let deleteBtn = '';
+      if (utenteCorrente && data.sender === utenteCorrente.name) {
+        deleteBtn = `<button onclick="deleteMsg('${data.msgId}')" style="color: #ef4444; font-size: 12px; cursor: pointer; border: none; background: none; margin-left: 10px; font-weight: bold;">Elimina</button>`;
+      }
+      chatBox.innerHTML += `<p id="msg-${data.msgId}"><b style="color:#38bdf8">${data.sender}:</b> ${data.text} <span style="font-size:10px; color:#94a3b8;">(${data.time || ''})</span> ${deleteBtn}</p>`;
       chatBox.scrollTop = chatBox.scrollHeight;
     });
 
-    // Invio del messaggio (salvataggio sul server + emissione socket)
-    // Invio del messaggio (salvataggio sul server + emissione socket)
+    // Invio del messaggio
     async function sendMsg() {
-      // Controllo autenticazione: se non è loggato, blocca l'invio e manda al login
       if (!utenteCorrente) {
         alert('Effettua prima l\'accesso per partecipare alla chat.');
         window.location.href = '/login.html';
@@ -178,12 +185,14 @@
         const data = await res.json();
         
         if (data.success) {
-          const timeNow = data.messages[data.messages.length - 1].time;
+          const lastMsg = data.messages[data.messages.length - 1];
+          // 3. MODIFICA: Emette anche l'ID del messaggio tramite socket
           socket.emit('send_message', { 
             tripId: tripId, 
             sender: mittente, 
             text: text,
-            time: timeNow
+            time: lastMsg.time,
+            msgId: lastMsg.id 
           });
 
           input.value = '';
@@ -192,6 +201,31 @@
         console.error('Errore nell\'invio del messaggio', err);
       }
     }
+
+    // 4. MODIFICA: Funzione per eliminare il messaggio e listener per farli sparire in tempo reale
+    async function deleteMsg(msgId) {
+      if (!confirm('Sei sicuro di voler eliminare questo messaggio?')) return;
+
+      try {
+        const res = await fetch(`/api/concerts/${concertId}/messages/${msgId}`, {
+          method: 'DELETE'
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          socket.emit('delete_message', { tripId: tripId, msgId: msgId });
+          const msgElement = document.getElementById(`msg-${msgId}`);
+          if (msgElement) msgElement.remove();
+        }
+      } catch (err) {
+        console.error('Errore durante l\'eliminazione:', err);
+      }
+    }
+
+    socket.on('message_deleted', (msgId) => {
+      const msgElement = document.getElementById(`msg-${msgId}`);
+      if (msgElement) msgElement.remove();
+    });
   </script>
 </body>
 </html>
