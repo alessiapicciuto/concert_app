@@ -243,15 +243,43 @@ app.post('/api/concerts/:id/messages', (req, res) => {
   }
 
   const newMessage = {
+    id: Date.now().toString(),
     userName: userName || 'Utente',
     text,
-    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    time: new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
   };
 
   concert.messages.push(newMessage);
   writeData(CONCERTS_FILE, concerts);
 
   res.json({ success: true, messages: concert.messages });
+});
+
+
+// Endpoint per eliminare un messaggio
+app.delete('/api/concerts/:id/messages/:msgId', (req, res) => {
+  const concertId = req.params.id;
+  const msgId = req.params.msgId;
+
+  // Legge la lista aggiornata dei concerti dal file JSON
+  const concerts = readData(CONCERTS_FILE);
+
+  const concert = concerts.find(c => String(c.id) === String(concertId));
+  if (!concert) {
+    return res.status(404).json({ message: 'Concerto non trovato' });
+  }
+
+  // Assicurati che l'array esista
+  if (!concert.messages) {
+    concert.messages = [];
+  }
+
+  // Filtra i messaggi tenendo solo quelli che NON hanno l'ID da eliminare
+  concert.messages = concert.messages.filter(msg => String(msg.id) !== String(msgId));
+
+  // Salva il file aggiornato
+  writeData(CONCERTS_FILE, concerts);
+  res.json({ success: true });
 });
 
 io.on('connection', (socket) => {
@@ -261,6 +289,10 @@ io.on('connection', (socket) => {
 
   socket.on('send_message', (data) => {
     io.to(data.tripId).emit('receive_message', data);
+  });
+  // Quando un utente elimina un messaggio, avvisa la stanza
+  socket.on('delete_message', (data) => {
+    io.to(data.tripId).emit('message_deleted', data.msgId);
   });
 });
 
