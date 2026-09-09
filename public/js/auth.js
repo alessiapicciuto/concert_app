@@ -81,8 +81,4 @@ formAccesso.addEventListener('submit', async (e) => {
   } catch (err) {
     erroreAccesso.textContent = 'Errore di connessione con il server';
   }
-<<<<<<< HEAD
 });
-=======
-});
->>>>>>> feature/auth-trips
