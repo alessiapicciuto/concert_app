@@ -1,9 +1,7 @@
-// riferimenti agli elementi HTML 
 const campoNome = document.getElementById('profilo-nome');
 const campoEmail = document.getElementById('profilo-email');
 const contenitoreViaggi = document.getElementById('contenitore-miei-viaggi');
 const contenitorePrenotazioni = document.getElementById('contenitore-prenotazioni');
-const btnLogout = document.getElementById('btn-logout');
 
 // Controllo Autenticazione 
 const utenteSalvato = localStorage.getItem('currentUser');
@@ -37,6 +35,7 @@ if (!utenteSalvato) {
             <div class="titolo-concerto"> CONCERTO: ${viaggio.concertName}</div>
             <div class="dettagli-viaggio">
               <p> PARTENZA DA: <strong>${viaggio.departureCity}</strong> </p>
+              <p> PUNTO DI RITROVO: <strong>${viaggio.meetingPoint || 'Da concordare'}</strong> </p>
               <p> ALLE ORE: <strong>${viaggio.departureTime}</strong> </p>
               <p> POSTI DISPONIBILI: <strong>${viaggio.availableSeats}</strong> </p>
               <p> PREZZO: <strong>€ ${viaggio.pricePerSeat}</strong> </p>
@@ -68,6 +67,7 @@ if (!utenteSalvato) {
               <div class="dettagli-viaggio">
                 <p> AUTISTA: <strong>${viaggio.driverName || 'Non specificato'}</strong> </p>
                 <p> PARTENZA DA: <strong>${viaggio.departureCity}</strong> </p>
+                <p> PUNTO DI RITROVO: <strong>${viaggio.meetingPoint || 'Da concordare'}</strong> </p>
                 <p> ALLE ORE: <strong>${viaggio.departureTime}</strong> </p>
                 <p> PREZZO: <strong>€ ${viaggio.pricePerSeat}</strong> </p>
               </div>
@@ -119,11 +119,18 @@ if (!utenteSalvato) {
   };
 
   caricaDatiProfilo();
-
-  // Gestione Logout
-  btnLogout.addEventListener('click', () => {
-    localStorage.removeItem('currentUser');
-    alert('Disconnessione effettuata con successo.');
-    window.location.href = '/login.html';
-  });
 }
+
+// Gestione Logout (spostata fuori per sicurezza globale)
+document.addEventListener('DOMContentLoaded', () => {
+  const btnLogout = document.getElementById('btn-logout');
+  if (btnLogout) {
+    btnLogout.addEventListener('click', () => {
+      if (confirm('Sei sicuro di voler uscire?')) {
+        localStorage.removeItem('currentUser');
+        alert('Disconnessione effettuata con successo.');
+        window.location.href = '/login.html';
+      }
+    });
+  }
+});

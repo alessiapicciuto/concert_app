@@ -3,6 +3,7 @@ const formViaggio = document.getElementById('form-crea-viaggio');
 const inputConcerto = document.getElementById('scelta-concerto');
 const datalistConcerti = document.getElementById('lista-concerti');
 const inputCitta = document.getElementById('citta-partenza');
+const inputRitrovo = document.getElementById('punto-di-ritrovo');
 const inputOrario = document.getElementById('orario-partenza');
 const inputPosti = document.getElementById('posti-disponibili');
 const inputPrezzo = document.getElementById('prezzo-posto');
@@ -52,6 +53,7 @@ if (editId) {
       if (viaggio) {
         inputConcerto.value = viaggio.concertName;
         inputCitta.value = viaggio.departureCity;
+        inputRitrovo.value = viaggio.meetingPoint || '';
         inputOrario.value = viaggio.departureTime;
         inputPosti.value = viaggio.availableSeats;
         inputPrezzo.value = viaggio.pricePerSeat;
@@ -67,6 +69,7 @@ formViaggio.addEventListener('submit', async (e) => {
   const payload = {
     concertName: inputConcerto.value.trim(),
     departureCity: inputCitta.value.trim(),
+    meetingPoint: inputRitrovo.value.trim(),
     departureTime: inputOrario.value,
     availableSeats: Number(inputPosti.value),
     pricePerSeat: Number(inputPrezzo.value),

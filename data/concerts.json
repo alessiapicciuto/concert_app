@@ -5,7 +5,8 @@
     "city": "Napoli",
     "venue": "Stadio Diego Armando Maradona",
     "date": "2026-11-15",
-    "genre": "Pop/Rock"
+    "genre": "Pop/Rock",
+    "messages": []
   },
   {
     "id": "2",
@@ -13,7 +14,8 @@
     "city": "Milano",
     "venue": "Unipol Forum",
     "date": "2026-10-05",
-    "genre": "Pop"
+    "genre": "Pop",
+    "messages": []
   },
   {
     "id": "3",
@@ -37,7 +39,8 @@
     "city": "Bologna",
     "venue": "Unipol Arena",
     "date": "2026-12-04",
-    "genre": "Pop Italiano"
+    "genre": "Pop Italiano",
+    "messages": []
   },
   {
     "id": "6",
