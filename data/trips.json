@@ -38,6 +38,7 @@
     "createdAt": "2026-08-29T10:02:50.884Z"
   },
   {
+<<<<<<< HEAD
     "id": "1787998354770",
     "driverId": "1787937911661",
     "driverName": "mario rossi",
@@ -50,6 +51,8 @@
     "passengers": []
   },
   {
+=======
+>>>>>>> feature/auth-trips
     "id": "1787999277698",
     "driverId": "1787999196968",
     "driverName": "marta verdi",
@@ -142,6 +145,7 @@
     "availableSeats": 6,
     "pricePerSeat": 15,
     "passengers": [],
+<<<<<<< HEAD
     "createdAt": "2026-08-30T16:20:39.019Z"
   },
   {
@@ -168,5 +172,31 @@
     "pricePerSeat": 21,
     "passengers": [],
     "createdAt": "2026-08-30T16:48:49.315Z"
+=======
+    "createdAt": "2026-08-29T14:28:32.161Z"
+  },
+  {
+    "id": "1788018435233",
+    "driverId": "1787937911661",
+    "driverName": "mario rossi",
+    "concertName": "Pinguini Tattici Nucleari - Stadi 2026",
+    "departureCity": "bologna",
+    "departureTime": "12:30",
+    "availableSeats": 0,
+    "pricePerSeat": 15,
+    "passengers": [
+      {
+        "userId": "1787999196968",
+        "userName": "marta verdi",
+        "bookedAt": "2026-08-29T15:58:26.115Z"
+      },
+      {
+        "userId": "1787999401178",
+        "userName": "giulia bianchi",
+        "bookedAt": "2026-08-29T16:01:11.040Z"
+      }
+    ],
+    "createdAt": "2026-08-29T15:47:15.235Z"
+>>>>>>> feature/auth-trips
   }
 ]

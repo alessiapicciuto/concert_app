@@ -49,7 +49,6 @@ formRegistrazione.addEventListener('submit', async (e) => {
     localStorage.setItem('currentUser', JSON.stringify(dati.user));
     alert('Registrazione completata con successo');
     window.location.href = '/profilo.html';
-  
   } catch (err) {
     erroreRegistrazione.textContent = 'Errore di connessione con il server';
   }
@@ -82,4 +81,8 @@ formAccesso.addEventListener('submit', async (e) => {
   } catch (err) {
     erroreAccesso.textContent = 'Errore di connessione con il server';
   }
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> feature/auth-trips
