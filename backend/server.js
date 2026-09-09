@@ -1,8 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const http = require('http');
-const path = require('path');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const { Server } = require('socket.io');
 
 const User = require('./models/User');
@@ -11,7 +11,15 @@ const Concert = require('./models/Concert');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+
+// Configurazione Socket.IO con CORS per il client React
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PUT', 'DELETE']
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 
 // Connessione a MongoDB
@@ -20,8 +28,8 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/concert_a
   .catch((err) => console.error('Errore di connessione a MongoDB:', err));
 
 // Middleware
+app.use(cors({ origin: 'http://localhost:5173' }));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
 
 // ================= AUTENTICAZIONE =================
 
