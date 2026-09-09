@@ -5,7 +5,8 @@
     "city": "Napoli",
     "venue": "Stadio Diego Armando Maradona",
     "date": "2026-11-15",
-    "genre": "Pop/Rock"
+    "genre": "Pop/Rock",
+    "messages": []
   },
   {
     "id": "2",

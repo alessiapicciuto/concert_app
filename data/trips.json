@@ -6,10 +6,16 @@
     "concertName": "dua lipa",
     "departureCity": "bari",
     "departureTime": "18:54",
-    "availableSeats": 6,
+    "availableSeats": 5,
     "pricePerSeat": 11,
     "createdAt": "2026-08-28T17:31:27.677Z",
-    "passengers": []
+    "passengers": [
+      {
+        "userId": "1788020327043",
+        "userName": "mario rossi",
+        "bookedAt": "2026-08-30T17:12:35.515Z"
+      }
+    ]
   },
   {
     "id": "1787996530540",
