@@ -2,17 +2,16 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ConcertApp - Catalogo</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <!-- Intestazione con pulsante di collegamento all'Area Personale -->
+  <!-- Intestazione con menu utente dinamico -->
   <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin: 20px auto 15px auto; padding: 0 10px;">
     <h1 style="margin: 0; color: #38bdf8;">CATALOGO CONCERTI</h1>
-    <a href="login.html" style="background-color: #0284c7; color: white; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px;">
-       Accedi / Area Personale
-    </a>
+    <div id="userMenu"></div>
   </div>
 
   <div style="max-width: 1000px; margin: 0 auto; padding: 0 10px;">
@@ -25,7 +24,7 @@
     const userMenu = document.getElementById('userMenu');
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
-    // Se l'utente è loggato, crea la tendina
+    // Se l'utente è loggato, crea la tendina con il suo nome
     if (currentUser) {
       userMenu.innerHTML = `
         <div class="dropdown">
@@ -39,7 +38,7 @@
         </div>
       `;
     } 
-    // Se non è loggato, crea il link semplice
+    // Se non è loggato, mostra il pulsante di accesso
     else {
       userMenu.innerHTML = `
         <a href="login.html" class="dropdown-btn" style="text-decoration: none; display: inline-block;">
@@ -50,20 +49,19 @@
 
     // Apre/Chiude il menu a tendina
     function toggleMenu(event) {
-      event.stopPropagation(); // Evita che il click chiuda subito il menu
+      event.stopPropagation();
       document.getElementById("dropdownMenu").classList.toggle("show");
     }
 
-    // Disconnette l'utente chiedendo prima conferma
+    // Disconnette l'utente
     function logout() {
       if (confirm('Sei sicuro di voler uscire?')) {
         localStorage.removeItem('currentUser');
         window.location.reload();
       }
     }
-    
 
-    // Chiude il menu se clicchi in un punto qualsiasi fuori dalla tendina
+    // Chiude il menu se si clicca fuori dalla tendina
     window.onclick = function(event) {
       const dropdowns = document.getElementsByClassName("dropdown-content");
       for (let i = 0; i < dropdowns.length; i++) {
@@ -78,21 +76,32 @@
     let concerts = [];
 
     async function getConcerts() {
-      const res = await fetch('/api/concerts');
-      concerts = await res.json();
-      render(concerts);
+      try {
+        const res = await fetch('/api/concerts');
+        concerts = await res.json();
+        render(concerts);
+      } catch (err) {
+        console.error('Errore nel caricamento dei concerti:', err);
+        document.getElementById('concertList').innerHTML = '<p style="color:red;">Errore nel caricamento del catalogo.</p>';
+      }
     }
 
     function render(list) {
-      document.getElementById('concertList').innerHTML = list.map(c => `
+      const container = document.getElementById('concertList');
+      if (!list || list.length === 0) {
+        container.innerHTML = '<p style="color: #aaa;">Nessun concerto trovato.</p>';
+        return;
+      }
+
+      container.innerHTML = list.map(c => `
         <div class="card">
           <div>
             <h3>${c.title}</h3>
-            <p> <b>Luogo:</b> ${c.city} (${c.venue})</p>
-            <p> <b>Genere:</b> ${c.genre}</p>
-            <p> <b>Data:</b> ${c.date}</p>
+            <p><b>Luogo:</b> ${c.city} (${c.venue})</p>
+            <p><b>Genere:</b> ${c.genre}</p>
+            <p><b>Data:</b> ${c.date}</p>
           </div>
-          <a href="concert.html?id=${c.id}" class="btn">Vedi Dettagli e Chat</a>
+          <a href="concert.html?id=${c.id || c._id}" class="btn">Vedi Dettagli e Chat</a>
         </div>
       `).join('');
     }
@@ -100,9 +109,9 @@
     function filterData() {
       const query = document.getElementById('search').value.toLowerCase();
       render(concerts.filter(c => 
-        c.city.toLowerCase().includes(query) || 
-        c.genre.toLowerCase().includes(query) ||
-        c.title.toLowerCase().includes(query)
+        (c.city && c.city.toLowerCase().includes(query)) || 
+        (c.genre && c.genre.toLowerCase().includes(query)) ||
+        (c.title && c.title.toLowerCase().includes(query))
       ));
     }
 
@@ -110,3 +119,4 @@
   </script>
 </body>
 </html>
+

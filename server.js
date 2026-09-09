@@ -53,12 +53,15 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
+// Login
+app.post('/api/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email e password sono obbligatorie.' });
+    }
 
-app.post('/api/login', (req, res) => {
-  const { email, password } = req.body;
-  const users = readData(USERS_FILE);
-  const user = users.find((u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
-
+    const user = await User.findOne({ email: email.toLowerCase(), password });
     if (!user) {
       return res.status(401).json({ message: 'Credenziali non valide.' });
     }
@@ -72,7 +75,7 @@ app.post('/api/login', (req, res) => {
   }
 });
 
-
+// ================= GESTIONE VIAGGI =================
 
 // Elenco viaggi
 app.get('/api/trips', async (req, res) => {
@@ -89,24 +92,55 @@ app.get('/api/trips', async (req, res) => {
   }
 });
 
+// Creazione viaggio
+app.post('/api/trips', async (req, res) => {
+  try {
+    const { driverId, driverName, concertName, departureCity, departureTime, availableSeats, pricePerSeat } = req.body;
 
-app.post('/api/trips', (req, res) => {
-  const { driverId, driverName, concertName, departureCity, departureTime, availableSeats, pricePerSeat } = req.body;
+    if (!driverId || !concertName || !departureCity || !departureTime || !availableSeats || !pricePerSeat) {
+      return res.status(400).json({ message: 'Compila tutti i campi del viaggio.' });
+    }
 
-  if (!driverId || !concertName || !departureCity || !departureTime || !availableSeats || !pricePerSeat) {
-    return res.status(400).json({ message: 'Compila tutti i campi del viaggio' });
+    const newTrip = await Trip.create({
+      driverId,
+      driverName,
+      concertName,
+      departureCity,
+      departureTime,
+      availableSeats,
+      pricePerSeat,
+      passengers: []
+    });
+
+    const obj = newTrip.toObject();
+    obj.id = obj._id.toString();
+    res.status(201).json(obj);
+  } catch (err) {
+    res.status(500).json({ message: 'Errore durante la creazione del viaggio.' });
   }
 });
 
+// Modifica viaggio
+app.put('/api/trips/:id', async (req, res) => {
+  try {
+    const tripId = req.params.id;
+    const { concertName, departureCity, departureTime, availableSeats, pricePerSeat } = req.body;
 
-app.put('/api/trips/:id', (req, res) => {
-  const tripId = req.params.id;
-  const { concertName, departureCity, departureTime, availableSeats, pricePerSeat } = req.body;
-  const trips = readData(TRIPS_FILE);
+    const updatedTrip = await Trip.findByIdAndUpdate(
+      tripId,
+      { concertName, departureCity, departureTime, availableSeats, pricePerSeat },
+      { new: true }
+    );
 
-  const trip = trips.find((t) => String(t.id) === String(tripId));
-  if (!trip) {
-    return res.status(404).json({ message: 'Viaggio non trovato.' });
+    if (!updatedTrip) {
+      return res.status(404).json({ message: 'Viaggio non trovato.' });
+    }
+
+    const obj = updatedTrip.toObject();
+    obj.id = obj._id.toString();
+    res.json(obj);
+  } catch (err) {
+    res.status(500).json({ message: 'Errore durante l\'aggiornamento del viaggio.' });
   }
 });
 
@@ -124,36 +158,32 @@ app.delete('/api/trips/:id', async (req, res) => {
   }
 });
 
-
-app.delete('/api/trips/:id', (req, res) => {
-  const tripId = req.params.id;
-  let trips = readData(TRIPS_FILE);
+// Prenotazione passaggio
+app.post('/api/trips/:id/book', async (req, res) => {
+  try {
+    const tripId = req.params.id;
+    const { userId, userName } = req.body;
 
     if (!userId || !userName) {
-      return res.status(400).json({ message: 'Dati utente mancanti' });
+      return res.status(400).json({ message: 'Dati utente mancanti.' });
     }
 
     const trip = await Trip.findById(tripId);
     if (!trip) {
-      return res.status(404).json({ message: 'Viaggio non trovato' });
+      return res.status(404).json({ message: 'Viaggio non trovato.' });
     }
 
     if (String(trip.driverId) === String(userId)) {
       return res.status(400).json({ message: 'Non puoi prenotare il tuo stesso passaggio.' });
     }
 
-
-app.post('/api/trips/:id/book', (req, res) => {
-  const tripId = req.params.id;
-  const { userId, userName } = req.body;
-
     const giaPrenotato = trip.passengers.some((p) => String(p.userId) === String(userId));
     if (giaPrenotato) {
-      return res.status(400).json({ message: 'Hai già prenotato questo passaggio' });
+      return res.status(400).json({ message: 'Hai già prenotato questo passaggio.' });
     }
 
     if (trip.availableSeats <= 0) {
-      return res.status(400).json({ message: 'Posti esauriti' });
+      return res.status(400).json({ message: 'Posti esauriti.' });
     }
 
     trip.passengers.push({ userId, userName, bookedAt: new Date().toISOString() });
@@ -177,28 +207,25 @@ app.post('/api/trips/:id/cancel-booking', async (req, res) => {
 
     const trip = await Trip.findById(tripId);
     if (!trip || !trip.passengers) {
-      return res.status(404).json({ message: 'Prenotazione non trovata' });
+      return res.status(404).json({ message: 'Prenotazione non trovata.' });
     }
 
     const index = trip.passengers.findIndex((p) => String(p.userId) === String(userId));
     if (index === -1) {
-      return res.status(400).json({ message: 'Non risulti tra i passeggeri' });
+      return res.status(400).json({ message: 'Non risulti tra i passeggeri.' });
     }
 
     trip.passengers.splice(index, 1);
     trip.availableSeats += 1;
     await trip.save();
 
-    res.json({ message: 'Prenotazione annullata' });
+    res.json({ message: 'Prenotazione annullata.' });
   } catch (err) {
     res.status(500).json({ message: 'Errore durante l\'annullamento.' });
   }
 });
 
-
-app.post('/api/trips/:id/cancel-booking', (req, res) => {
-  const tripId = req.params.id;
-  const { userId } = req.body;
+// ================= GESTIONE CONCERTI E CHAT =================
 
 // Elenco concerti
 app.get('/api/concerts', async (req, res) => {
@@ -225,7 +252,7 @@ app.get('/api/concerts/:id', async (req, res) => {
     obj.id = obj._id.toString();
     if (obj.messages) {
       obj.messages = obj.messages.map((m) => ({
-        id: m._id.toString(),
+        id: m._id ? m._id.toString() : m.id,
         userName: m.userName,
         text: m.text,
         time: m.time
@@ -263,7 +290,7 @@ app.post('/api/concerts/:id/messages', async (req, res) => {
     await concert.save();
 
     const messagesFormatted = concert.messages.map((m) => ({
-      id: m._id.toString(),
+      id: m._id ? m._id.toString() : m.id,
       userName: m.userName,
       text: m.text,
       time: m.time
@@ -278,26 +305,23 @@ app.post('/api/concerts/:id/messages', async (req, res) => {
 // Endpoint per eliminare un messaggio
 app.delete('/api/concerts/:id/messages/:msgId', async (req, res) => {
   try {
-    const concertId = req.params.id;
-    const msgId = req.params.msgId;
+    const { id: concertId, msgId } = req.params;
 
     const concert = await Concert.findById(concertId);
     if (!concert) {
       return res.status(404).json({ message: 'Concerto non trovato' });
     }
 
-    if (!concert.messages) {
-      concert.messages = [];
-    }
+    concert.messages = concert.messages.filter(m => (m._id ? m._id.toString() : m.id) !== msgId);
+    await concert.save();
 
-
-app.get('/api/concerts', (req, res) => {
-  const concerts = readData(CONCERTS_FILE);
-  res.json(concerts);
+    res.json({ success: true, message: 'Messaggio eliminato' });
+  } catch (err) {
+    res.status(500).json({ message: 'Errore durante l\'eliminazione del messaggio' });
+  }
 });
 
 // ================= SOCKET.IO =================
-
 
 io.on('connection', (socket) => {
   socket.on('join_trip', (tripId) => {
@@ -312,7 +336,6 @@ io.on('connection', (socket) => {
     io.to(data.tripId).emit('message_deleted', data.msgId);
   });
 });
-
 
 server.listen(PORT, () => {
   console.log(`Server attivo su http://localhost:${PORT}`);
