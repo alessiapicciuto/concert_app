@@ -38,18 +38,6 @@
     "createdAt": "2026-08-29T10:02:50.884Z"
   },
   {
-    "id": "1787998354770",
-    "driverId": "1787937911661",
-    "driverName": "mario rossi",
-    "concertName": "Coldplay",
-    "departureCity": "milano",
-    "departureTime": "11:00",
-    "availableSeats": 2,
-    "pricePerSeat": 12,
-    "createdAt": "2026-08-29T10:12:34.770Z",
-    "passengers": []
-  },
-  {
     "id": "1787999277698",
     "driverId": "1787999196968",
     "driverName": "marta verdi",
@@ -142,31 +130,29 @@
     "availableSeats": 6,
     "pricePerSeat": 15,
     "passengers": [],
-    "createdAt": "2026-08-30T16:20:39.019Z"
+    "createdAt": "2026-08-29T14:28:32.161Z"
   },
   {
-    "id": "1788107841203",
-    "driverId": "1787999196968",
-    "driverName": "marta verdi",
-    "concertName": "Imagine Dragons - Loom World Tour",
-    "departureCity": "bari",
-    "departureTime": "14:50",
-    "availableSeats": 3,
-    "pricePerSeat": 25,
-    "passengers": [],
-    "createdAt": "2026-08-30T16:37:21.204Z"
-  },
-  {
-    "id": "1788108529315",
-    "driverId": "1787999196968",
-    "driverName": "marta verdi",
-    "concertName": "Cesare Cremonini - Live 2026",
-    "departureCity": "milano",
-    "meetingPoint": "via melo",
-    "departureTime": "18:40",
-    "availableSeats": 2,
-    "pricePerSeat": 21,
-    "passengers": [],
-    "createdAt": "2026-08-30T16:48:49.315Z"
+    "id": "1788018435233",
+    "driverId": "1787937911661",
+    "driverName": "mario rossi",
+    "concertName": "Pinguini Tattici Nucleari - Stadi 2026",
+    "departureCity": "bologna",
+    "departureTime": "12:30",
+    "availableSeats": 0,
+    "pricePerSeat": 15,
+    "passengers": [
+      {
+        "userId": "1787999196968",
+        "userName": "marta verdi",
+        "bookedAt": "2026-08-29T15:58:26.115Z"
+      },
+      {
+        "userId": "1787999401178",
+        "userName": "giulia bianchi",
+        "bookedAt": "2026-08-29T16:01:11.040Z"
+      }
+    ],
+    "createdAt": "2026-08-29T15:47:15.235Z"
   }
 ]

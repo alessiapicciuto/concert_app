@@ -1,4 +1,3 @@
-// riferimenti a HTML
 const sezioneAccesso = document.getElementById('sezione-login');
 const sezioneRegistrazione = document.getElementById('sezione-registrazione');
 
