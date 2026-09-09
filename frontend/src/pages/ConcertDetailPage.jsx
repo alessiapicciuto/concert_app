@@ -8,9 +8,6 @@ export default function ConcertDetailPage() {
   const concertId = params.id;
   const navigate = useNavigate();
 
-  // ================= PARTE 1: STATO E LOGICA =================
-
-  // Utente loggato dal localStorage
   const [currentUser] = useState(function () {
     const salvato = localStorage.getItem('currentUser');
     if (salvato) {
@@ -32,20 +29,15 @@ export default function ConcertDetailPage() {
   const socketRef = useRef(null);
   const chatBoxRef = useRef(null);
 
-  // Funzione per ricaricare la lista dei viaggi
   function aggiornaViaggi(titolo, artista) {
     fetch('http://localhost:3000/api/trips')
-      .then(function (res) {
-        return res.json();
-      })
+      .then(function (res) { return res.json(); })
       .then(function (tuttiTrips) {
         const tit = (titolo || '').toLowerCase();
         const art = (artista || '').toLowerCase();
 
         const viaggiFiltrati = tuttiTrips.filter(function (t) {
-          if (t.concertId && String(t.concertId) === String(concertId)) {
-            return true;
-          }
+          if (t.concertId && String(t.concertId) === String(concertId)) return true;
           if (t.concertName) {
             const tripName = t.concertName.toLowerCase();
             const coincideTitolo = tit && (tripName.includes(tit) || tit.includes(tripName));
@@ -63,17 +55,13 @@ export default function ConcertDetailPage() {
       });
   }
 
-  // Caricamento iniziale dei dettagli del concerto e configurazione Socket.IO
   useEffect(function () {
     const tripId = 'trip_' + concertId;
-
-    // Connessione Socket.IO
     const socket = io('http://localhost:3000');
     socketRef.current = socket;
 
     socket.emit('join_trip', tripId);
 
-    // Ricezione messaggio in tempo reale
     socket.on('receive_message', function (data) {
       setMessages(function (prev) {
         return prev.concat({
@@ -85,7 +73,6 @@ export default function ConcertDetailPage() {
       });
     });
 
-    // Eliminazione messaggio in tempo reale
     socket.on('message_deleted', function (msgId) {
       setMessages(function (prev) {
         return prev.filter(function (m) {
@@ -94,64 +81,29 @@ export default function ConcertDetailPage() {
       });
     });
 
-    // Chiamata API concerto
     fetch('http://localhost:3000/api/concerts/' + concertId)
-      .then(function (res) {
-        return res.json();
-      })
+      .then(function (res) { return res.json(); })
       .then(function (c) {
         setConcert(c);
-        if (c.messages) {
-          setMessages(c.messages);
-        }
-
-        // Chiamata per recuperare i viaggi collegati
-        fetch('http://localhost:3000/api/trips')
-          .then(function (resTrips) {
-            return resTrips.json();
-          })
-          .then(function (tuttiTrips) {
-            const tit = (c.title || '').toLowerCase();
-            const art = (c.artist || '').toLowerCase();
-
-            const viaggiFiltrati = tuttiTrips.filter(function (t) {
-              if (t.concertId && String(t.concertId) === String(concertId)) {
-                return true;
-              }
-              if (t.concertName) {
-                const tripName = t.concertName.toLowerCase();
-                const coincideTitolo = tit && (tripName.includes(tit) || tit.includes(tripName));
-                const coincideArtista = art && (tripName.includes(art) || art.includes(tripName));
-                return coincideTitolo || coincideArtista;
-              }
-              return false;
-            });
-
-            setTrips(viaggiFiltrati);
-            setCaricamentoTrips(false);
-          })
-          .catch(function () {
-            setCaricamentoTrips(false);
-          });
+        if (c.messages) setMessages(c.messages);
+        aggiornaViaggi(c.title, c.artist);
       })
       .catch(function () {
         setCaricamentoTrips(false);
       });
 
-    // Pulizia socket quando si esce dalla pagina
     return function () {
       socket.disconnect();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [concertId]);
 
-  // Autoscroll della chat verso il basso
   useEffect(function () {
     if (chatBoxRef.current) {
       chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
     }
   }, [messages]);
 
-  // Prenotazione passaggio
   function prenotaPassaggio(idViaggio) {
     if (!currentUser) {
       alert("Effettua prima l'accesso per prenotare un passaggio.");
@@ -167,48 +119,34 @@ export default function ConcertDetailPage() {
         userName: currentUser.name
       })
     })
-      .then(function (res) {
-        return res.json();
-      })
+      .then(function (res) { return res.json(); })
       .then(function (data) {
         alert(data.message);
-        if (concert) {
-          aggiornaViaggi(concert.title, concert.artist);
-        }
+        if (concert) aggiornaViaggi(concert.title, concert.artist);
       })
       .catch(function () {
         alert('Errore durante la prenotazione.');
       });
   }
 
-  // Annullamento prenotazione
   function annullaPassaggio(idViaggio) {
-    if (!window.confirm('Vuoi davvero annullare la prenotazione di questo passaggio?')) {
-      return;
-    }
+    if (!window.confirm('Vuoi davvero annullare la prenotazione di questo passaggio?')) return;
 
     fetch('http://localhost:3000/api/trips/' + idViaggio + '/cancel-booking', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        userId: currentUser.id
-      })
+      body: JSON.stringify({ userId: currentUser.id })
     })
-      .then(function (res) {
-        return res.json();
-      })
+      .then(function (res) { return res.json(); })
       .then(function (data) {
         alert(data.message);
-        if (concert) {
-          aggiornaViaggi(concert.title, concert.artist);
-        }
+        if (concert) aggiornaViaggi(concert.title, concert.artist);
       })
       .catch(function () {
         alert("Errore durante l'annullamento.");
       });
   }
 
-  // Invio messaggio in chat
   function inviaMessaggio() {
     if (!currentUser) {
       alert("Effettua prima l'accesso per partecipare alla chat.");
@@ -217,9 +155,7 @@ export default function ConcertDetailPage() {
     }
 
     const testoPulito = testoMessaggio.trim();
-    if (!testoPulito) {
-      return;
-    }
+    if (!testoPulito) return;
 
     const mittente = currentUser.name;
 
@@ -228,9 +164,7 @@ export default function ConcertDetailPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userName: mittente, text: testoPulito })
     })
-      .then(function (res) {
-        return res.json();
-      })
+      .then(function (res) { return res.json(); })
       .then(function (data) {
         if (data.success) {
           const ultimoMessaggio = data.messages[data.messages.length - 1];
@@ -251,18 +185,13 @@ export default function ConcertDetailPage() {
       });
   }
 
-  // Eliminazione messaggio
   function eliminaMessaggio(msgId) {
-    if (!window.confirm('Sei sicuro di voler eliminare questo messaggio?')) {
-      return;
-    }
+    if (!window.confirm('Sei sicuro di voler eliminare questo messaggio?')) return;
 
     fetch('http://localhost:3000/api/concerts/' + concertId + '/messages/' + msgId, {
       method: 'DELETE'
     })
-      .then(function (res) {
-        return res.json();
-      })
+      .then(function (res) { return res.json(); })
       .then(function (data) {
         if (data.success) {
           if (socketRef.current) {
@@ -272,9 +201,7 @@ export default function ConcertDetailPage() {
             });
           }
           setMessages(function (prev) {
-            return prev.filter(function (m) {
-              return m.id !== msgId;
-            });
+            return prev.filter(function (m) { return m.id !== msgId; });
           });
         }
       })
@@ -283,33 +210,31 @@ export default function ConcertDetailPage() {
       });
   }
 
-  // ================= PARTE 2: STRUTTURA VISIVA (HTML/JSX) =================
-
   return (
-    <div>
+    <div className="detail-wrapper">
       <Link to="/" className="back-link">← Torna al catalogo</Link>
 
-      {/* Dettagli del Concerto */}
-      <div id="detail" className="header-card">
+      {/* Intestazione Concerto */}
+      <div className="header-card">
         {concert ? (
           <div>
             <h1>{concert.title || concert.artist}</h1>
-            <p><b>Luogo:</b> {concert.city} ({concert.venue})</p>
-            <p><b>Data:</b> {concert.date} | <b>Genere:</b> {concert.genre}</p>
+            <p><strong>Luogo:</strong> {concert.city} ({concert.venue})</p>
+            <p><strong>Data:</strong> {concert.date} | <strong>Genere:</strong> {concert.genre}</p>
           </div>
         ) : (
-          <p style={{ color: '#aaa' }}>Caricamento dettagli concerto...</p>
+          <p style={{ color: '#94a3b8' }}>Caricamento dettagli...</p>
         )}
       </div>
 
-      {/* Elenco Viaggi e Passaggi */}
-      <div className="header-card" style={{ marginTop: '15px' }}>
-        <h3 style={{ marginTop: 0, color: '#38bdf8' }}>Viaggi e Passaggi Disponibili</h3>
-        <div id="tripsList">
+      {/* Viaggi e Passaggi */}
+      <div className="header-card">
+        <h3>Viaggi e Passaggi Disponibili</h3>
+        <div>
           {caricamentoTrips ? (
-            <p style={{ color: '#aaa' }}>Caricamento viaggi...</p>
+            <p style={{ color: '#94a3b8' }}>Caricamento viaggi...</p>
           ) : trips.length === 0 ? (
-            <p style={{ color: '#aaa' }}>Nessun passaggio ancora offerto per questo concerto.</p>
+            <p style={{ color: '#94a3b8' }}>Nessun passaggio ancora offerto per questo concerto.</p>
           ) : (
             trips.map(function (t) {
               const idViaggio = t.id || t._id;
@@ -324,55 +249,30 @@ export default function ConcertDetailPage() {
               });
 
               return (
-                <div
-                  key={idViaggio}
-                  style={{
-                    borderBottom: '1px solid #333',
-                    padding: '10px 0',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
-                  }}
-                >
-                  <div>
-                    <p style={{ margin: '2px 0' }}><b>Partenza da:</b> {citta} | <b>Autista:</b> {autista}</p>
-                    <p style={{ margin: '2px 0' }}><b>Posti:</b> {posti} | <b>Costo:</b> {prezzo}€</p>
+                <div key={idViaggio} className="riga-passaggio">
+                  <div className="info-passaggio">
+                    <p><strong>Partenza da:</strong> {citta} | <strong>Autista:</strong> {autista}</p>
+                    <p><strong>Posti:</strong> {posti} | <strong>Costo:</strong> {prezzo}€</p>
                   </div>
                   <div>
                     {eAutista ? (
-                      <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>Tuo passaggio</span>
+                      <span style={{ color: '#94a3b8', fontStyle: 'italic', fontSize: '13px' }}>Tuo passaggio</span>
                     ) : giaPrenotato ? (
                       <button
+                        className="btn-annulla-mini"
                         onClick={function () { annullaPassaggio(idViaggio); }}
-                        style={{
-                          backgroundColor: '#dc2626',
-                          color: 'white',
-                          border: 'none',
-                          padding: '6px 12px',
-                          borderRadius: '4px',
-                          cursor: 'pointer',
-                          fontWeight: 'bold'
-                        }}
                       >
                         Annulla Prenotazione
                       </button>
                     ) : posti > 0 ? (
                       <button
+                        className="btn-prenota-mini"
                         onClick={function () { prenotaPassaggio(idViaggio); }}
-                        style={{
-                          backgroundColor: '#059669',
-                          color: 'white',
-                          border: 'none',
-                          padding: '6px 12px',
-                          borderRadius: '4px',
-                          cursor: 'pointer',
-                          fontWeight: 'bold'
-                        }}
                       >
                         PRENOTA
                       </button>
                     ) : (
-                      <span style={{ color: '#f87171', fontWeight: 'bold' }}>ESAURITO</span>
+                      <span style={{ color: '#f87171', fontWeight: 'bold', fontSize: '13px' }}>ESAURITO</span>
                     )}
                   </div>
                 </div>
@@ -382,50 +282,44 @@ export default function ConcertDetailPage() {
         </div>
       </div>
 
-      {/* Chat di Gruppo */}
+      {/* Sezione Chat */}
       <div className="chat-container">
-        <h3 style={{ marginTop: 0, color: '#38bdf8' }}>Chat di Gruppo</h3>
+        <h3>Chat di Gruppo</h3>
         
-        <div id="chatBox" className="chat-box" ref={chatBoxRef}>
-          {messages.map(function (m) {
-            const eMioMessaggio = currentUser && m.userName === currentUser.name;
-            return (
-              <p key={m.id} id={'msg-' + m.id}>
-                <b style={{ color: '#38bdf8' }}>{m.userName}:</b> {m.text}{' '}
-                <span style={{ fontSize: '10px', color: '#94a3b8' }}>({m.time})</span>
-                {eMioMessaggio && (
-                  <button
-                    onClick={function () { eliminaMessaggio(m.id); }}
-                    style={{
-                      color: '#ef4444',
-                      fontSize: '12px',
-                      cursor: 'pointer',
-                      border: 'none',
-                      background: 'none',
-                      marginLeft: '10px',
-                      fontWeight: 'bold'
-                    }}
-                  >
-                    Elimina
-                  </button>
-                )}
-              </p>
-            );
-          })}
+        <div className="chat-box" ref={chatBoxRef}>
+          {messages.length === 0 ? (
+            <p style={{ color: '#94a3b8' }}>Nessun messaggio presente. Inizia la conversazione!</p>
+          ) : (
+            messages.map(function (m) {
+              const eMio = currentUser && m.userName === currentUser.name;
+              return (
+                <div key={m.id} className="chat-riga-messaggio">
+                  <span>
+                    <strong style={{ color: '#38bdf8' }}>{m.userName}:</strong> {m.text}{' '}
+                    <span style={{ fontSize: '11px', color: '#94a3b8' }}>({m.time})</span>
+                  </span>
+                  {eMio && (
+                    <button
+                      type="button"
+                      className="btn-elimina-msg"
+                      onClick={function () { eliminaMessaggio(m.id); }}
+                    >
+                      Elimina
+                    </button>
+                  )}
+                </div>
+              );
+            })
+          )}
         </div>
 
         <div className="chat-input-group">
           <input
             type="text"
-            id="msgText"
             placeholder="Scrivi un messaggio..."
             value={testoMessaggio}
             onChange={function (e) { setTestoMessaggio(e.target.value); }}
-            onKeyUp={function (e) {
-              if (e.key === 'Enter') {
-                inviaMessaggio();
-              }
-            }}
+            onKeyUp={function (e) { if (e.key === 'Enter') inviaMessaggio(); }}
           />
           <button onClick={inviaMessaggio}>Invia</button>
         </div>

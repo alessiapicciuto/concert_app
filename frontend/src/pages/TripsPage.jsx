@@ -27,15 +27,28 @@ export default function TripsPage() {
   const [pricePerSeat, setPricePerSeat] = useState('');
   const [errore, setErrore] = useState('');
 
+  const [listaConcerti, setListaConcerti] = useState([]);
+
   useEffect(function () {
     if (!currentUser) {
       navigate('/login');
       return;
     }
 
+    fetch('http://localhost:3000/api/concerts')
+      .then(function (res) {
+        return res.json();
+      })
+      .then(function (dati) {
+        setListaConcerti(dati);
+      })
+      .catch(function () {});
+
     if (editId) {
       fetch('http://localhost:3000/api/trips/' + editId)
-        .then(function (res) { return res.json(); })
+        .then(function (res) {
+          return res.json();
+        })
         .then(function (trip) {
           setConcertName(trip.concertName || '');
           setDepartureCity(trip.departureCity || '');
@@ -51,6 +64,11 @@ export default function TripsPage() {
   function handleSubmit(e) {
     e.preventDefault();
     setErrore('');
+
+    if (!concertName.trim()) {
+      setErrore('Inserisci o seleziona un concerto valido');
+      return;
+    }
 
     const url = editId
       ? 'http://localhost:3000/api/trips/' + editId
@@ -71,7 +89,9 @@ export default function TripsPage() {
         pricePerSeat: Number(pricePerSeat)
       })
     })
-      .then(function (res) { return res.json(); })
+      .then(function (res) {
+        return res.json();
+      })
       .then(function (data) {
         if (data.success || data.trip || !data.error) {
           navigate('/profile');
@@ -87,54 +107,70 @@ export default function TripsPage() {
   return (
     <div className="trips-page">
       <div className="scheda-viaggio">
-        <h2>{editId ? 'Modifica Passaggio' : 'Offri un passaggio'}</h2>
+        <h2>{editId ? 'MODIFICA PASSAGGIO' : 'OFFRI UN PASSAGGIO'}</h2>
 
         <form onSubmit={handleSubmit}>
+          {/* Input collegato al datalist nativo */}
           <div className="campo">
-            <label>Concerto di destinazione</label>
+            <label>CONCERTO DI DESTINAZIONE</label>
             <input
               type="text"
+              list="elenco-concerti"
               required
               placeholder="es.: Dua Lipa"
               value={concertName}
-              onChange={function (e) { setConcertName(e.target.value); }}
+              onChange={function (e) {
+                setConcertName(e.target.value);
+              }}
             />
+            <datalist id="elenco-concerti">
+              {listaConcerti.map(function (c) {
+                const testo = (c.title || c.artist) + ' (' + c.city + ')';
+                return <option key={c.id || c._id} value={testo} />;
+              })}
+            </datalist>
           </div>
 
           <div className="campo">
-            <label>Città di partenza</label>
+            <label>CITTA' DI PARTENZA</label>
             <input
               type="text"
               required
               placeholder="es.: Bari"
               value={departureCity}
-              onChange={function (e) { setDepartureCity(e.target.value); }}
+              onChange={function (e) {
+                setDepartureCity(e.target.value);
+              }}
             />
           </div>
 
           <div className="campo">
-            <label>Punto di ritrovo</label>
+            <label>PUNTO DI RITROVO</label>
             <input
               type="text"
               required
               placeholder="es.: Stazione Centrale"
               value={meetingPoint}
-              onChange={function (e) { setMeetingPoint(e.target.value); }}
+              onChange={function (e) {
+                setMeetingPoint(e.target.value);
+              }}
             />
           </div>
 
           <div className="campo">
-            <label>Orario di partenza</label>
+            <label>ORARIO DI PARTENZA</label>
             <input
               type="time"
               required
               value={departureTime}
-              onChange={function (e) { setDepartureTime(e.target.value); }}
+              onChange={function (e) {
+                setDepartureTime(e.target.value);
+              }}
             />
           </div>
 
           <div className="campo">
-            <label>Posti disponibili</label>
+            <label>POSTI DISPONIBILI</label>
             <input
               type="number"
               min="1"
@@ -142,24 +178,28 @@ export default function TripsPage() {
               required
               placeholder="es.: 3"
               value={availableSeats}
-              onChange={function (e) { setAvailableSeats(e.target.value); }}
+              onChange={function (e) {
+                setAvailableSeats(e.target.value);
+              }}
             />
           </div>
 
           <div className="campo">
-            <label>Prezzo per passeggero</label>
+            <label>PREZZO PER PASSEGGERO</label>
             <input
               type="number"
               min="0"
               required
               placeholder="es.: 15"
               value={pricePerSeat}
-              onChange={function (e) { setPricePerSeat(e.target.value); }}
+              onChange={function (e) {
+                setPricePerSeat(e.target.value);
+              }}
             />
           </div>
 
           <button type="submit">
-            {editId ? 'Salva Modifiche' : 'Pubblica Annuncio'}
+            {editId ? 'Salva Modifiche' : 'pubblica annuncio'}
           </button>
 
           {errore && <div className="messaggio-esito">{errore}</div>}
