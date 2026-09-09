@@ -1,75 +1,88 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-}
-
-body {
-  background-color: #0f172a;
-  color: #f8fafc;
+.trips-page {
+  width: 100%;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 20px;
+  align-items: center; /* Centra perfettamente in verticale */
+  background-color: #0f172a;
+  padding: 30px 20px;
+  box-sizing: border-box;
 }
 
 .scheda-viaggio {
   background-color: #1e293b;
-  padding: 30px;
-  border-radius: 10px;
+  padding: 32px 36px;
+  border-radius: 12px;
   width: 100%;
-  max-width: 420px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  max-width: 440px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  box-sizing: border-box;
 }
 
-h2 {
+.scheda-viaggio h2 {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   color: #38bdf8;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
-.campo {
-  margin-bottom: 15px;
+.scheda-viaggio .campo {
+  margin-bottom: 14px;
+  text-align: left;
 }
 
-label {
+.scheda-viaggio label {
   display: block;
   margin-bottom: 5px;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 700;
   color: #cbd5e1;
+  text-transform: uppercase;
 }
 
-input, select {
+.scheda-viaggio input, 
+.scheda-viaggio select {
   width: 100%;
-  padding: 10px;
+  padding: 11px 14px;
   border-radius: 6px;
   border: 1px solid #334155;
   background-color: #0f172a;
   color: #ffffff;
   font-size: 14px;
+  box-sizing: border-box;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
 }
 
-input:focus, select:focus {
-  outline: none;
+.scheda-viaggio input:focus, 
+.scheda-viaggio select:focus {
   border-color: #38bdf8;
 }
 
-button {
+.scheda-viaggio input::placeholder {
+  color: #64748b;
+}
+
+.scheda-viaggio button[type="submit"] {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   background-color: #0284c7;
   color: #ffffff;
   border: none;
   border-radius: 6px;
   font-size: 15px;
-  font-weight: bold;
+  font-weight: 700;
   cursor: pointer;
-  margin-top: 10px;
+  margin-top: 14px;
+  transition: background-color 0.2s ease;
+  font-family: inherit;
 }
 
-button:hover {
+.scheda-viaggio button[type="submit"]:hover {
   background-color: #0369a1;
 }
 
@@ -82,30 +95,18 @@ button:hover {
 
 .link-ritorno {
   text-align: center;
-  margin-top: 15px;
-  font-size: 13px;
+  margin-top: 18px;
 }
 
 .link-ritorno a {
   color: #38bdf8;
   text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  transition: opacity 0.2s ease;
 }
 
-.btn-apri-tendina {
-  position: absolute;
-  right: 8px;
-  width: auto;
-  margin-top: 0;
-  padding: 4px 8px;
-  background: transparent;
-  color: #38bdf8;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-  line-height: 1;
-}
-
-.btn-apri-tendina:hover {
-  background: transparent;
-  color: #7dd3fc;
+.link-ritorno a:hover {
+  text-decoration: underline;
+  opacity: 0.85;
 }

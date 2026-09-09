@@ -1,17 +1,9 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-}
-
-body {
-  background-color: #0f172a;
-  color: #f8fafc;
+.auth-page {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  padding: 20px;
 }
 
 .scheda-autenticazione {
@@ -23,7 +15,7 @@ body {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
-h2 {
+.scheda-autenticazione h2 {
   text-align: center;
   margin-bottom: 20px;
   color: #38bdf8;
@@ -33,14 +25,14 @@ h2 {
   margin-bottom: 15px;
 }
 
-label {
+.campo label {
   display: block;
   margin-bottom: 5px;
   font-size: 14px;
   color: #cbd5e1;
 }
 
-input {
+.campo input {
   width: 100%;
   padding: 10px;
   border-radius: 6px;
@@ -50,12 +42,12 @@ input {
   font-size: 14px;
 }
 
-input:focus {
+.campo input:focus {
   outline: none;
   border-color: #38bdf8;
 }
 
-button {
+.scheda-autenticazione button {
   width: 100%;
   padding: 10px;
   background-color: #0284c7;
@@ -68,7 +60,7 @@ button {
   margin-top: 10px;
 }
 
-button:hover {
+.scheda-autenticazione button:hover {
   background-color: #0369a1;
 }
 
@@ -83,10 +75,6 @@ button:hover {
   color: #38bdf8;
   cursor: pointer;
   text-decoration: underline;
-}
-
-.hidden {
-  display: none;
 }
 
 .messaggio-errore {
