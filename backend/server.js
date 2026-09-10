@@ -12,7 +12,6 @@ const Concert = require('./models/Concert');
 const app = express();
 const server = http.createServer(app);
 
-// Configurazione Socket.IO con CORS per il client React
 const io = new Server(server, {
   cors: {
     origin: 'http://localhost:5173',
@@ -22,18 +21,15 @@ const io = new Server(server, {
 
 const PORT = process.env.PORT || 3000;
 
-// Connessione a MongoDB
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/concert_app')
   .then(() => console.log('Connesso con successo a MongoDB'))
   .catch((err) => console.error('Errore di connessione a MongoDB:', err));
 
-// Middleware
 app.use(cors({ origin: 'http://localhost:5173' }));
 app.use(express.json());
 
 // ================= AUTENTICAZIONE =================
 
-// Registrazione
 app.post('/api/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -41,14 +37,15 @@ app.post('/api/register', async (req, res) => {
       return res.status(400).json({ message: 'Tutti i campi sono obbligatori.' });
     }
 
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    const emailClean = String(email).toLowerCase();
+    const existingUser = await User.findOne({ email: emailClean });
     if (existingUser) {
       return res.status(400).json({ message: 'Email già registrata.' });
     }
 
     const newUser = await User.create({
       name,
-      email: email.toLowerCase(),
+      email: emailClean,
       password
     });
 
@@ -61,7 +58,6 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-// Login
 app.post('/api/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -69,7 +65,8 @@ app.post('/api/login', async (req, res) => {
       return res.status(400).json({ message: 'Email e password sono obbligatorie.' });
     }
 
-    const user = await User.findOne({ email: email.toLowerCase(), password });
+    const emailClean = String(email).toLowerCase();
+    const user = await User.findOne({ email: emailClean, password });
     if (!user) {
       return res.status(401).json({ message: 'Credenziali non valide.' });
     }
@@ -85,7 +82,6 @@ app.post('/api/login', async (req, res) => {
 
 // ================= GESTIONE VIAGGI =================
 
-// Elenco viaggi
 app.get('/api/trips', async (req, res) => {
   try {
     const trips = await Trip.find();
@@ -100,20 +96,33 @@ app.get('/api/trips', async (req, res) => {
   }
 });
 
-// Creazione viaggio
 app.post('/api/trips', async (req, res) => {
   try {
-    const { driverId, driverName, concertName, departureCity, departureTime, availableSeats, pricePerSeat } = req.body;
+    const { 
+      driverId, 
+      driverName, 
+      concertName, 
+      departureCity, 
+      meetingPoint, 
+      luogoRitrovo, 
+      ritrovo, 
+      departureTime, 
+      availableSeats, 
+      pricePerSeat 
+    } = req.body;
 
-    if (!driverId || !concertName || !departureCity || !departureTime || !availableSeats || !pricePerSeat) {
-      return res.status(400).json({ message: 'Compila tutti i campi del viaggio.' });
+    if (!driverId || !concertName || !departureCity || !departureTime || availableSeats === undefined || pricePerSeat === undefined) {
+      return res.status(400).json({ message: 'Compila tutti i campi obbligatori del viaggio.' });
     }
+
+    const puntoRitrovoFinale = meetingPoint || luogoRitrovo || ritrovo || '';
 
     const newTrip = await Trip.create({
       driverId,
       driverName,
       concertName,
       departureCity,
+      meetingPoint: puntoRitrovoFinale,
       departureTime,
       availableSeats,
       pricePerSeat,
@@ -122,21 +131,38 @@ app.post('/api/trips', async (req, res) => {
 
     const obj = newTrip.toObject();
     obj.id = obj._id.toString();
-    res.status(201).json(obj);
+    res.status(201).json({ success: true, trip: obj });
   } catch (err) {
     res.status(500).json({ message: 'Errore durante la creazione del viaggio.' });
   }
 });
 
-// Modifica viaggio
 app.put('/api/trips/:id', async (req, res) => {
   try {
     const tripId = req.params.id;
-    const { concertName, departureCity, departureTime, availableSeats, pricePerSeat } = req.body;
+    const { 
+      concertName, 
+      departureCity, 
+      meetingPoint, 
+      luogoRitrovo, 
+      ritrovo, 
+      departureTime, 
+      availableSeats, 
+      pricePerSeat 
+    } = req.body;
+
+    const puntoRitrovoFinale = meetingPoint || luogoRitrovo || ritrovo || '';
 
     const updatedTrip = await Trip.findByIdAndUpdate(
       tripId,
-      { concertName, departureCity, departureTime, availableSeats, pricePerSeat },
+      { 
+        concertName, 
+        departureCity, 
+        meetingPoint: puntoRitrovoFinale, 
+        departureTime, 
+        availableSeats, 
+        pricePerSeat 
+      },
       { new: true }
     );
 
@@ -146,13 +172,12 @@ app.put('/api/trips/:id', async (req, res) => {
 
     const obj = updatedTrip.toObject();
     obj.id = obj._id.toString();
-    res.json(obj);
+    res.json({ success: true, trip: obj });
   } catch (err) {
     res.status(500).json({ message: 'Errore durante l\'aggiornamento del viaggio.' });
   }
 });
 
-// Eliminazione viaggio
 app.delete('/api/trips/:id', async (req, res) => {
   try {
     const trip = await Trip.findByIdAndDelete(req.params.id);
@@ -166,15 +191,10 @@ app.delete('/api/trips/:id', async (req, res) => {
   }
 });
 
-// Prenotazione passaggio
 app.post('/api/trips/:id/book', async (req, res) => {
   try {
     const tripId = req.params.id;
     const { userId, userName } = req.body;
-
-    if (!userId || !userName) {
-      return res.status(400).json({ message: 'Dati utente mancanti.' });
-    }
 
     const trip = await Trip.findById(tripId);
     if (!trip) {
@@ -207,7 +227,6 @@ app.post('/api/trips/:id/book', async (req, res) => {
   }
 });
 
-// Annullamento prenotazione
 app.post('/api/trips/:id/cancel-booking', async (req, res) => {
   try {
     const tripId = req.params.id;
@@ -235,7 +254,6 @@ app.post('/api/trips/:id/cancel-booking', async (req, res) => {
 
 // ================= GESTIONE CONCERTI E CHAT =================
 
-// Elenco concerti
 app.get('/api/concerts', async (req, res) => {
   try {
     const concerts = await Concert.find();
@@ -250,30 +268,28 @@ app.get('/api/concerts', async (req, res) => {
   }
 });
 
-// Singolo concerto per ID
+// Rotta fondamentale per caricare i dettagli del singolo concerto
 app.get('/api/concerts/:id', async (req, res) => {
   try {
     const concert = await Concert.findById(req.params.id);
-    if (!concert) return res.status(404).json({ error: 'Concerto non trovato' });
-
+    if (!concert) {
+      return res.status(404).json({ message: 'Concerto non trovato.' });
+    }
     const obj = concert.toObject();
     obj.id = obj._id.toString();
     if (obj.messages) {
-      obj.messages = obj.messages.map((m) => ({
-        id: m._id ? m._id.toString() : m.id,
-        userName: m.userName,
-        text: m.text,
-        time: m.time
-      }));
+      obj.messages = obj.messages.map((m) => {
+        const mObj = m.toObject ? m.toObject() : m;
+        mObj.id = mObj._id ? mObj._id.toString() : mObj.id;
+        return mObj;
+      });
     }
-
     res.json(obj);
   } catch (err) {
-    res.status(500).json({ error: 'Concerto non trovato' });
+    res.status(500).json({ message: 'Errore nel recupero del concerto.' });
   }
 });
 
-// Salva e restituisce i messaggi della chat per un concerto
 app.post('/api/concerts/:id/messages', async (req, res) => {
   try {
     const concertId = req.params.id;
@@ -281,51 +297,56 @@ app.post('/api/concerts/:id/messages', async (req, res) => {
 
     const concert = await Concert.findById(concertId);
     if (!concert) {
-      return res.status(404).json({ message: 'Concerto non trovato' });
+      return res.status(404).json({ message: 'Concerto non trovato.' });
     }
 
     if (!concert.messages) {
       concert.messages = [];
     }
 
-    const newMessage = {
-      userName: userName || 'Utente',
+    const timeString = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    concert.messages.push({
+      userName,
       text,
-      time: new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
-    };
+      time: timeString
+    });
 
-    concert.messages.push(newMessage);
     await concert.save();
 
-    const messagesFormatted = concert.messages.map((m) => ({
-      id: m._id ? m._id.toString() : m.id,
-      userName: m.userName,
-      text: m.text,
-      time: m.time
-    }));
+    const messagesFormatted = concert.messages.map((m) => {
+      const mObj = m.toObject ? m.toObject() : m;
+      return {
+        id: mObj._id ? mObj._id.toString() : mObj.id,
+        userName: mObj.userName,
+        text: mObj.text,
+        time: mObj.time
+      };
+    });
 
     res.json({ success: true, messages: messagesFormatted });
   } catch (err) {
-    res.status(500).json({ message: 'Errore nell\'invio del messaggio' });
+    res.status(500).json({ message: 'Errore nell\'invio del messaggio.' });
   }
 });
 
-// Endpoint per eliminare un messaggio
 app.delete('/api/concerts/:id/messages/:msgId', async (req, res) => {
   try {
     const { id: concertId, msgId } = req.params;
 
     const concert = await Concert.findById(concertId);
     if (!concert) {
-      return res.status(404).json({ message: 'Concerto non trovato' });
+      return res.status(404).json({ message: 'Concerto non trovato.' });
     }
 
-    concert.messages = concert.messages.filter(m => (m._id ? m._id.toString() : m.id) !== msgId);
-    await concert.save();
+    concert.messages = concert.messages.filter((m) => {
+      const currentId = m._id ? m._id.toString() : m.id;
+      return currentId !== msgId;
+    });
 
-    res.json({ success: true, message: 'Messaggio eliminato' });
+    await concert.save();
+    res.json({ success: true, message: 'Messaggio eliminato.' });
   } catch (err) {
-    res.status(500).json({ message: 'Errore durante l\'eliminazione del messaggio' });
+    res.status(500).json({ message: 'Errore durante l\'eliminazione.' });
   }
 });
 
