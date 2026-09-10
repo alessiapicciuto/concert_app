@@ -45,6 +45,7 @@ export default function ProfilePage() {
       return;
     }
     caricaViaggi();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser, navigate]);
 
   function eseguiLogout() {
