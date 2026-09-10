@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import '../styles/trips.css';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import TripsView from '../components/TripsView';
 
 export default function TripsPage() {
   const navigate = useNavigate();
@@ -36,28 +36,35 @@ export default function TripsPage() {
     }
 
     fetch('http://localhost:3000/api/concerts')
-      .then(function (res) {
-        return res.json();
-      })
+      .then(function (res) { return res.json(); })
       .then(function (dati) {
         setListaConcerti(dati);
       })
       .catch(function () {});
 
+    // Risolve l'errore 404: preleva i dati filtrando dalla lista generale dei viaggi
     if (editId) {
-      fetch('http://localhost:3000/api/trips/' + editId)
-        .then(function (res) {
-          return res.json();
+      fetch('http://localhost:3000/api/trips')
+        .then(function (res) { return res.json(); })
+        .then(function (tuttiIviaggi) {
+          const tripTrovato = tuttiIviaggi.find(function (t) {
+            return String(t.id || t._id) === String(editId);
+          });
+
+          if (tripTrovato) {
+            setConcertName(tripTrovato.concertName || '');
+            setDepartureCity(tripTrovato.departureCity || '');
+            setMeetingPoint(tripTrovato.meetingPoint || tripTrovato.luogoRitrovo || tripTrovato.ritrovo || '');
+            setDepartureTime(tripTrovato.departureTime || '');
+            setAvailableSeats(tripTrovato.availableSeats !== undefined ? tripTrovato.availableSeats : '');
+            setPricePerSeat(tripTrovato.pricePerSeat !== undefined ? tripTrovato.pricePerSeat : '');
+          } else {
+            setErrore("Impossibile trovare i dati del viaggio da modificare.");
+          }
         })
-        .then(function (trip) {
-          setConcertName(trip.concertName || '');
-          setDepartureCity(trip.departureCity || '');
-          setMeetingPoint(trip.meetingPoint || '');
-          setDepartureTime(trip.departureTime || '');
-          setAvailableSeats(trip.availableSeats || '');
-          setPricePerSeat(trip.pricePerSeat || '');
-        })
-        .catch(function () {});
+        .catch(function () {
+          setErrore("Errore di connessione durante il recupero del viaggio.");
+        });
     }
   }, [currentUser, editId, navigate]);
 
@@ -89,9 +96,7 @@ export default function TripsPage() {
         pricePerSeat: Number(pricePerSeat)
       })
     })
-      .then(function (res) {
-        return res.json();
-      })
+      .then(function (res) { return res.json(); })
       .then(function (data) {
         if (data.success || data.trip || !data.error) {
           navigate('/profile');
@@ -105,110 +110,23 @@ export default function TripsPage() {
   }
 
   return (
-    <div className="trips-page">
-      <div className="scheda-viaggio">
-        <h2>{editId ? 'MODIFICA PASSAGGIO' : 'OFFRI UN PASSAGGIO'}</h2>
-
-        <form onSubmit={handleSubmit}>
-          {/* Input collegato al datalist nativo */}
-          <div className="campo">
-            <label>CONCERTO DI DESTINAZIONE</label>
-            <input
-              type="text"
-              list="elenco-concerti"
-              required
-              placeholder="es.: Dua Lipa"
-              value={concertName}
-              onChange={function (e) {
-                setConcertName(e.target.value);
-              }}
-            />
-            <datalist id="elenco-concerti">
-              {listaConcerti.map(function (c) {
-                const testo = (c.title || c.artist) + ' (' + c.city + ')';
-                return <option key={c.id || c._id} value={testo} />;
-              })}
-            </datalist>
-          </div>
-
-          <div className="campo">
-            <label>CITTA' DI PARTENZA</label>
-            <input
-              type="text"
-              required
-              placeholder="es.: Bari"
-              value={departureCity}
-              onChange={function (e) {
-                setDepartureCity(e.target.value);
-              }}
-            />
-          </div>
-
-          <div className="campo">
-            <label>PUNTO DI RITROVO</label>
-            <input
-              type="text"
-              required
-              placeholder="es.: Stazione Centrale"
-              value={meetingPoint}
-              onChange={function (e) {
-                setMeetingPoint(e.target.value);
-              }}
-            />
-          </div>
-
-          <div className="campo">
-            <label>ORARIO DI PARTENZA</label>
-            <input
-              type="time"
-              required
-              value={departureTime}
-              onChange={function (e) {
-                setDepartureTime(e.target.value);
-              }}
-            />
-          </div>
-
-          <div className="campo">
-            <label>POSTI DISPONIBILI</label>
-            <input
-              type="number"
-              min="1"
-              max="8"
-              required
-              placeholder="es.: 3"
-              value={availableSeats}
-              onChange={function (e) {
-                setAvailableSeats(e.target.value);
-              }}
-            />
-          </div>
-
-          <div className="campo">
-            <label>PREZZO PER PASSEGGERO</label>
-            <input
-              type="number"
-              min="0"
-              required
-              placeholder="es.: 15"
-              value={pricePerSeat}
-              onChange={function (e) {
-                setPricePerSeat(e.target.value);
-              }}
-            />
-          </div>
-
-          <button type="submit">
-            {editId ? 'Salva Modifiche' : 'pubblica annuncio'}
-          </button>
-
-          {errore && <div className="messaggio-esito">{errore}</div>}
-        </form>
-
-        <div className="link-ritorno">
-          <Link to="/profile">← Torna all'area personale</Link>
-        </div>
-      </div>
-    </div>
+    <TripsView
+      editId={editId}
+      concertName={concertName}
+      setConcertName={setConcertName}
+      departureCity={departureCity}
+      setDepartureCity={setDepartureCity}
+      meetingPoint={meetingPoint}
+      setMeetingPoint={setMeetingPoint}
+      departureTime={departureTime}
+      setDepartureTime={setDepartureTime}
+      availableSeats={availableSeats}
+      setAvailableSeats={setAvailableSeats}
+      pricePerSeat={pricePerSeat}
+      setPricePerSeat={setPricePerSeat}
+      listaConcerti={listaConcerti}
+      errore={errore}
+      handleSubmit={handleSubmit}
+    />
   );
 }

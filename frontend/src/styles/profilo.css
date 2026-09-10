@@ -3,7 +3,7 @@
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center; /* Centra perfettamente in verticale sullo schermo */
+  align-items: center;
   padding: 40px 20px;
   background-color: #0f172a;
   box-sizing: border-box;
@@ -15,7 +15,6 @@
   margin: 0 auto;
 }
 
-/* Freccia di ritorno allineata con l'inizio della scheda */
 .link-ritorno-profilo {
   display: inline-block;
   color: #38bdf8;
@@ -72,14 +71,16 @@
   flex-wrap: wrap;
 }
 
+/* Bottoni principali in alto */
 .btn-azione {
   display: inline-block;
-  padding: 10px 18px;
-  border-radius: 6px;
-  font-size: 13px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
   font-weight: bold;
   text-decoration: none;
   text-align: center;
+  text-transform: uppercase;
   transition: opacity 0.2s ease, transform 0.1s ease;
   cursor: pointer;
   border: none;
@@ -126,21 +127,30 @@
   line-height: 1.5;
 }
 
+/* Contenitore dei bottoni interni alle card (CENTRATI) */
 .azioni-viaggio {
   margin-top: 12px;
   display: flex;
   gap: 10px;
-  justify-content: flex-end;
+  justify-content: center; /* Modificato da flex-end a center */
 }
 
+/* Impedisce ai bottoni singoli di occupare tutta la riga */
+.azioni-viaggio button {
+  width: auto;
+  flex: initial;
+}
+
+/* Bottoni Modifica ed Elimina */
 .btn-modifica {
   background-color: #f59e0b;
   color: #ffffff;
   border: none;
-  padding: 6px 14px;
-  border-radius: 5px;
-  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
   font-weight: bold;
+  text-transform: uppercase;
   cursor: pointer;
 }
 
@@ -152,10 +162,11 @@
   background-color: #ef4444;
   color: #ffffff;
   border: none;
-  padding: 6px 14px;
-  border-radius: 5px;
-  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
   font-weight: bold;
+  text-transform: uppercase;
   cursor: pointer;
 }
 
@@ -163,6 +174,7 @@
   background-color: #dc2626;
 }
 
+/* Bottone Disconnetti in basso (compatto, centrato, scritta grande) */
 .box-logout-bottom {
   display: flex;
   justify-content: center;
@@ -173,13 +185,13 @@
   background-color: #ef4444;
   color: #ffffff;
   border: none;
-  padding: 12px 30px;
+  padding: 10px 24px;
   border-radius: 6px;
   font-size: 14px;
   font-weight: bold;
+  text-transform: uppercase;
   cursor: pointer;
-  width: 100%;
-  max-width: 200px;
+  width: auto;
   transition: background-color 0.2s ease;
 }
 
