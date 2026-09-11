@@ -1,23 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import TripsView from '../components/TripsView';
+import { useAuth } from '../context/AuthContext'; // <-- 1. IMPORTIAMO USEAUTH
 
 export default function TripsPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const editId = searchParams.get('editId');
 
-  const [currentUser] = useState(function () {
-    const salvato = localStorage.getItem('currentUser');
-    if (salvato) {
-      try {
-        return JSON.parse(salvato);
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  });
+  // 2. RECUPERIAMO USER, TOKEN E LOGOUT DAL CONTESTO GLOBALE
+  const { user: currentUser, token, logout } = useAuth();
 
   const [concertName, setConcertName] = useState('');
   const [departureCity, setDepartureCity] = useState('');
@@ -28,6 +20,13 @@ export default function TripsPage() {
   const [errore, setErrore] = useState('');
 
   const [listaConcerti, setListaConcerti] = useState([]);
+
+  // Funzione di utilità per gestire i token scaduti
+  function gestisciSessioneScaduta(messaggio) {
+    alert(messaggio || "Token non valido o scaduto. Effettua nuovamente il login.");
+    logout();
+    navigate('/login');
+  }
 
   useEffect(function () {
     if (!currentUser) {
@@ -42,7 +41,7 @@ export default function TripsPage() {
       })
       .catch(function () {});
 
-    // Risolve l'errore 404: preleva i dati filtrando dalla lista generale dei viaggi
+    // Preleva i dati filtrando dalla lista generale dei viaggi
     if (editId) {
       fetch('http://localhost:3000/api/trips')
         .then(function (res) { return res.json(); })
@@ -67,7 +66,8 @@ export default function TripsPage() {
         });
     }
   }, [currentUser, editId, navigate]);
-function handleSubmit(e) {
+
+  function handleSubmit(e) {
     e.preventDefault();
     setErrore('');
 
@@ -85,7 +85,7 @@ function handleSubmit(e) {
       method: method,
       headers: { 
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('token') // <-- AGGIUNGI QUESTA RIGA
+        'Authorization': 'Bearer ' + token // <-- USA IL TOKEN DAL CONTESTO
       },
       body: JSON.stringify({
         driverId: currentUser.id,
@@ -98,8 +98,15 @@ function handleSubmit(e) {
         pricePerSeat: Number(pricePerSeat)
       })
     })
-      .then(function (res) { return res.json(); })
-      .then(function (data) {
+      .then(async function (res) {
+        const data = await res.json();
+
+        // Controllo della validità del token
+        if (res.status === 401 || res.status === 403) {
+          gestisciSessioneScaduta(data.message);
+          return;
+        }
+
         if (data.success || data.trip || !data.error) {
           navigate('/profile');
         } else {
@@ -110,7 +117,6 @@ function handleSubmit(e) {
         setErrore('Errore di connessione al server');
       });
   }
-  
 
   return (
     <TripsView

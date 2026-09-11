@@ -1,24 +1,23 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProfileView from '../components/ProfileView';
+import { useAuth } from '../context/AuthContext'; // <-- 1. IMPORTIAMO USEAUTH
 
 export default function ProfilePage() {
   const navigate = useNavigate();
 
-  const [currentUser, setCurrentUser] = useState(function () {
-    const salvato = localStorage.getItem('currentUser');
-    if (salvato) {
-      try {
-        return JSON.parse(salvato);
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  });
+  // 2. RECUPERIAMO USER, TOKEN E LOGOUT DAL CONTESTO GLOBALE
+  const { user: currentUser, token, logout } = useAuth();
 
   const [myCreatedTrips, setMyCreatedTrips] = useState([]);
   const [myBookedTrips, setMyBookedTrips] = useState([]);
+
+  // Funzione di utilità per gestire i token scaduti
+  function gestisciSessioneScaduta(messaggio) {
+    alert(messaggio || "Token non valido o scaduto. Effettua nuovamente il login.");
+    logout();
+    navigate('/login');
+  }
 
   function caricaViaggi() {
     if (!currentUser) return;
@@ -45,13 +44,12 @@ export default function ProfilePage() {
       return;
     }
     caricaViaggi();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [currentUser, navigate]);
 
   function eseguiLogout() {
     if (window.confirm('Sei sicuro di voler uscire?')) {
-      localStorage.removeItem('currentUser');
-      setCurrentUser(null);
+      logout(); 
       navigate('/');
     }
   }
@@ -60,10 +58,18 @@ export default function ProfilePage() {
     if (!window.confirm('Vuoi davvero cancellare questo viaggio?')) return;
 
     fetch('http://localhost:3000/api/trips/' + idViaggio, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: {
+        'Authorization': 'Bearer ' + token 
+      }
     })
-      .then(function (res) { return res.json(); })
-      .then(function () {
+      .then(async function (res) {
+        const data = await res.json();
+        if (res.status === 401 || res.status === 403) {
+          gestisciSessioneScaduta(data.message);
+          return;
+        }
+
         setMyCreatedTrips(function (prev) {
           return prev.filter(function (t) { return (t.id || t._id) !== idViaggio; });
         });
@@ -78,13 +84,19 @@ export default function ProfilePage() {
 
     fetch('http://localhost:3000/api/trips/' + idViaggio + '/cancel-booking', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('token')
-       },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token // <-- USA IL TOKEN DAL CONTESTO
+      },
       body: JSON.stringify({ userId: currentUser.id })
     })
-      .then(function (res) { return res.json(); })
-      .then(function (data) {
+      .then(async function (res) {
+        const data = await res.json();
+        if (res.status === 401 || res.status === 403) {
+          gestisciSessioneScaduta(data.message);
+          return;
+        }
+
         alert(data.message || 'Prenotazione annullata con successo');
         caricaViaggi();
       })

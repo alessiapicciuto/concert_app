@@ -1,14 +1,10 @@
 import { useState, useEffect } from 'react';
 import HomeView from '../components/HomeView';
+import { useAuth } from '../context/AuthContext'; // <-- 1. IMPORTIAMO USEAUTH
 
 export default function HomePage() {
-  const [currentUser, setCurrentUser] = useState(function () {
-    const salvato = localStorage.getItem('currentUser');
-    if (salvato) {
-      try { return JSON.parse(salvato); } catch { return null; }
-    }
-    return null;
-  });
+  // 2. RECUPERIAMO USER E LOGOUT DAL CONTESTO GLOBALE
+  const { user: currentUser, logout } = useAuth();
 
   const [concerts, setConcerts] = useState([]);
   const [search, setSearch] = useState('');
@@ -23,9 +19,7 @@ export default function HomePage() {
 
   function eseguiLogout() {
     if (window.confirm('Sei sicuro di voler uscire?')) {
-      localStorage.removeItem('currentUser');
-      localStorage.removeItem('token');
-      setCurrentUser(null);
+      logout(); // <-- 3. USA LA FUNZIONE LOGOUT DEL CONTESTO
       setMenuAperto(false);
     }
   }

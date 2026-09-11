@@ -2,23 +2,15 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import ConcertDetailView from '../components/ConcertDetailView';
+import { useAuth } from '../context/AuthContext'; // <-- 1. IMPORTIAMO USEAUTH
 
 export default function ConcertDetailPage() {
   const params = useParams();
   const concertId = params.id;
   const navigate = useNavigate();
 
-  const [currentUser] = useState(function () {
-    const salvato = localStorage.getItem('currentUser');
-    if (salvato) {
-      try {
-        return JSON.parse(salvato);
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  });
+  // 2. RECUPERIAMO USER, TOKEN E LOGOUT DAL CONTESTO GLOBALE
+  const { user: currentUser, token, logout } = useAuth();
 
   const [concert, setConcert] = useState(null);
   const [trips, setTrips] = useState([]);
@@ -29,11 +21,10 @@ export default function ConcertDetailPage() {
   const socketRef = useRef(null);
   const chatBoxRef = useRef(null);
 
-  // Funzione di utilità per gestire i token scaduti
+  // 3. USIAMO LOGOUT() DEL CONTESTO PER RESETTARE LO STATO GLOBALE E IL LOCALSTORAGE
   function gestisciSessioneScaduta(messaggio) {
     alert(messaggio || "Token non valido o scaduto. Effettua nuovamente il login.");
-    localStorage.removeItem('token');
-    localStorage.removeItem('currentUser');
+    logout(); 
     navigate('/login');
   }
 
@@ -123,7 +114,7 @@ export default function ConcertDetailPage() {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('token')
+        'Authorization': 'Bearer ' + token // <-- USA IL TOKEN DAL CONTESTO
       },
       body: JSON.stringify({
         userId: currentUser.id,
@@ -151,7 +142,7 @@ export default function ConcertDetailPage() {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('token')
+        'Authorization': 'Bearer ' + token // <-- USA IL TOKEN DAL CONTESTO
       },
       body: JSON.stringify({ userId: currentUser.id })
     })
@@ -185,14 +176,13 @@ export default function ConcertDetailPage() {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('token')
+        'Authorization': 'Bearer ' + token // <-- USA IL TOKEN DAL CONTESTO
       },
       body: JSON.stringify({ userName: mittente, text: testoPulito })
     })
       .then(async function (res) {
         const data = await res.json();
         
-        // Controllo se il token è scaduto
         if (res.status === 401 || res.status === 403) {
           gestisciSessioneScaduta(data.message);
           return;
@@ -225,7 +215,7 @@ export default function ConcertDetailPage() {
     fetch('http://localhost:3000/api/concerts/' + concertId + '/messages/' + msgId, {
       method: 'DELETE',
       headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('token') 
+        'Authorization': 'Bearer ' + token // <-- USA IL TOKEN DAL CONTESTO
       }
     })
       .then(async function (res) {

@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoginView from '../components/LoginView';
+import { useAuth } from '../context/AuthContext';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { login } = useAuth(); // <-- Estratta la funzione login dal contesto globale
+  
   const [isRegistrazione, setIsRegistrazione] = useState(false);
 
   const [loginEmail, setLoginEmail] = useState('');
@@ -27,9 +30,9 @@ export default function LoginPage() {
       .then(function (r) {
         if (!r.ok) return setErroreLogin(r.d.message);
         
-        // --- TOKEN ---
-        localStorage.setItem('token', r.d.token); // Salva l'Access Token JWT
-        localStorage.setItem('currentUser', JSON.stringify(r.d.user));
+        // Usiamo la funzione login del contesto: 
+        // aggiorna sia lo stato globale React che il localStorage
+        login(r.d.user, r.d.token);
         
         navigate('/profile');
       })
@@ -48,9 +51,9 @@ export default function LoginPage() {
       .then(function (r) {
         if (!r.ok) return setErroreRegistrazione(r.d.message);
         
-        // (Opzionale se vuoi il login automatico anche alla registrazione, 
-        // ricorda di restituire il token anche nella rotta /api/register del backend se ti serve)
-        localStorage.setItem('currentUser', JSON.stringify(r.d.user));
+        // Se il backend restituisce il token anche alla registrazione, passa r.d.token
+        // altrimenti passa r.d.token || null per registrare l'utente nel contesto
+        login(r.d.user, r.d.token || null);
         
         navigate('/profile');
       })
