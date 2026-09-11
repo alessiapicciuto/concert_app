@@ -67,8 +67,7 @@ export default function TripsPage() {
         });
     }
   }, [currentUser, editId, navigate]);
-
-  function handleSubmit(e) {
+function handleSubmit(e) {
     e.preventDefault();
     setErrore('');
 
@@ -84,7 +83,10 @@ export default function TripsPage() {
 
     fetch(url, {
       method: method,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token') // <-- AGGIUNGI QUESTA RIGA
+      },
       body: JSON.stringify({
         driverId: currentUser.id,
         driverName: currentUser.name,
@@ -108,6 +110,7 @@ export default function TripsPage() {
         setErrore('Errore di connessione al server');
       });
   }
+  
 
   return (
     <TripsView

@@ -4,10 +4,12 @@ const http = require('http');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const { Server } = require('socket.io');
+const jwt = require('jsonwebtoken');
 
 const User = require('./models/User');
 const Trip = require('./models/Trip');
 const Concert = require('./models/Concert');
+const verifyToken = require('./middleware/auth'); // <-- Importato il middleware JWT
 
 const app = express();
 const server = http.createServer(app);
@@ -71,8 +73,16 @@ app.post('/api/login', async (req, res) => {
       return res.status(401).json({ message: 'Credenziali non valide.' });
     }
 
+    // GENERAZIONE DELL'ACCESS TOKEN
+    const token = jwt.sign(
+      { userId: user._id.toString(), email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    );
+
     res.json({ 
       message: 'Accesso eseguito con successo', 
+      token, // <-- Restituisce il token al frontend
       user: { id: user._id.toString(), name: user.name, email: user.email } 
     });
   } catch (err) {
@@ -96,7 +106,8 @@ app.get('/api/trips', async (req, res) => {
   }
 });
 
-app.post('/api/trips', async (req, res) => {
+// Esempio di rotta protetta con il middleware (es. creare un viaggio richiede il token)
+app.post('/api/trips', verifyToken, async (req, res) => {
   try {
     const { 
       driverId, 
@@ -137,7 +148,7 @@ app.post('/api/trips', async (req, res) => {
   }
 });
 
-app.put('/api/trips/:id', async (req, res) => {
+app.put('/api/trips/:id', verifyToken, async (req, res) => {
   try {
     const tripId = req.params.id;
     const { 
@@ -178,7 +189,7 @@ app.put('/api/trips/:id', async (req, res) => {
   }
 });
 
-app.delete('/api/trips/:id', async (req, res) => {
+app.delete('/api/trips/:id', verifyToken, async (req, res) => {
   try {
     const trip = await Trip.findByIdAndDelete(req.params.id);
     if (!trip) {
@@ -191,7 +202,7 @@ app.delete('/api/trips/:id', async (req, res) => {
   }
 });
 
-app.post('/api/trips/:id/book', async (req, res) => {
+app.post('/api/trips/:id/book', verifyToken, async (req, res) => {
   try {
     const tripId = req.params.id;
     const { userId, userName } = req.body;
@@ -227,7 +238,7 @@ app.post('/api/trips/:id/book', async (req, res) => {
   }
 });
 
-app.post('/api/trips/:id/cancel-booking', async (req, res) => {
+app.post('/api/trips/:id/cancel-booking', verifyToken, async (req, res) => {
   try {
     const tripId = req.params.id;
     const { userId } = req.body;
@@ -268,7 +279,6 @@ app.get('/api/concerts', async (req, res) => {
   }
 });
 
-// Rotta fondamentale per caricare i dettagli del singolo concerto
 app.get('/api/concerts/:id', async (req, res) => {
   try {
     const concert = await Concert.findById(req.params.id);
@@ -290,7 +300,7 @@ app.get('/api/concerts/:id', async (req, res) => {
   }
 });
 
-app.post('/api/concerts/:id/messages', async (req, res) => {
+app.post('/api/concerts/:id/messages', verifyToken, async (req, res) => {
   try {
     const concertId = req.params.id;
     const { userName, text } = req.body;
@@ -329,7 +339,7 @@ app.post('/api/concerts/:id/messages', async (req, res) => {
   }
 });
 
-app.delete('/api/concerts/:id/messages/:msgId', async (req, res) => {
+app.delete('/api/concerts/:id/messages/:msgId', verifyToken, async (req, res) => {
   try {
     const { id: concertId, msgId } = req.params;
 

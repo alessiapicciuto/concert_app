@@ -24,6 +24,7 @@ export default function HomePage() {
   function eseguiLogout() {
     if (window.confirm('Sei sicuro di voler uscire?')) {
       localStorage.removeItem('currentUser');
+      localStorage.removeItem('token');
       setCurrentUser(null);
       setMenuAperto(false);
     }

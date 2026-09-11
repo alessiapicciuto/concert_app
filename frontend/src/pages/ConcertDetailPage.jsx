@@ -113,7 +113,10 @@ export default function ConcertDetailPage() {
 
     fetch('http://localhost:3000/api/trips/' + idViaggio + '/book', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token') // <-- AGGIUNGI QUI
+      },
       body: JSON.stringify({
         userId: currentUser.id,
         userName: currentUser.name
@@ -134,7 +137,10 @@ export default function ConcertDetailPage() {
 
     fetch('http://localhost:3000/api/trips/' + idViaggio + '/cancel-booking', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token') // <-- AGGIUNGI QUI
+      },
       body: JSON.stringify({ userId: currentUser.id })
     })
       .then(function (res) { return res.json(); })
@@ -161,7 +167,9 @@ export default function ConcertDetailPage() {
 
     fetch('http://localhost:3000/api/concerts/' + concertId + '/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
+       },
       body: JSON.stringify({ userName: mittente, text: testoPulito })
     })
       .then(function (res) { return res.json(); })
@@ -189,7 +197,11 @@ export default function ConcertDetailPage() {
     if (!window.confirm('Sei sicuro di voler eliminare questo messaggio?')) return;
 
     fetch('http://localhost:3000/api/concerts/' + concertId + '/messages/' + msgId, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('token') 
+      }
+
     })
       .then(function (res) { return res.json(); })
       .then(function (data) {

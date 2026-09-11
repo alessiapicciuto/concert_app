@@ -26,7 +26,11 @@ export default function LoginPage() {
       .then(function (res) { return res.json().then(function (d) { return { ok: res.ok, d: d }; }); })
       .then(function (r) {
         if (!r.ok) return setErroreLogin(r.d.message);
+        
+        // --- TOKEN ---
+        localStorage.setItem('token', r.d.token); // Salva l'Access Token JWT
         localStorage.setItem('currentUser', JSON.stringify(r.d.user));
+        
         navigate('/profile');
       })
       .catch(function () { setErroreLogin('Errore di connessione'); });
@@ -43,7 +47,11 @@ export default function LoginPage() {
       .then(function (res) { return res.json().then(function (d) { return { ok: res.ok, d: d }; }); })
       .then(function (r) {
         if (!r.ok) return setErroreRegistrazione(r.d.message);
+        
+        // (Opzionale se vuoi il login automatico anche alla registrazione, 
+        // ricorda di restituire il token anche nella rotta /api/register del backend se ti serve)
         localStorage.setItem('currentUser', JSON.stringify(r.d.user));
+        
         navigate('/profile');
       })
       .catch(function () { setErroreRegistrazione('Errore di connessione'); });
