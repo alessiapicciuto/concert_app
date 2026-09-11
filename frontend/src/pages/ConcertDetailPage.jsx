@@ -29,6 +29,14 @@ export default function ConcertDetailPage() {
   const socketRef = useRef(null);
   const chatBoxRef = useRef(null);
 
+  // Funzione di utilità per gestire i token scaduti
+  function gestisciSessioneScaduta(messaggio) {
+    alert(messaggio || "Token non valido o scaduto. Effettua nuovamente il login.");
+    localStorage.removeItem('token');
+    localStorage.removeItem('currentUser');
+    navigate('/login');
+  }
+
   function aggiornaViaggi(titolo, artista) {
     fetch('http://localhost:3000/api/trips')
       .then(function (res) { return res.json(); })
@@ -115,15 +123,19 @@ export default function ConcertDetailPage() {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('token') // <-- AGGIUNGI QUI
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
       },
       body: JSON.stringify({
         userId: currentUser.id,
         userName: currentUser.name
       })
     })
-      .then(function (res) { return res.json(); })
-      .then(function (data) {
+      .then(async function (res) {
+        const data = await res.json();
+        if (res.status === 401 || res.status === 403) {
+          gestisciSessioneScaduta(data.message);
+          return;
+        }
         alert(data.message);
         if (concert) aggiornaViaggi(concert.title, concert.artist);
       })
@@ -139,12 +151,16 @@ export default function ConcertDetailPage() {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem('token') // <-- AGGIUNGI QUI
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
       },
       body: JSON.stringify({ userId: currentUser.id })
     })
-      .then(function (res) { return res.json(); })
-      .then(function (data) {
+      .then(async function (res) {
+        const data = await res.json();
+        if (res.status === 401 || res.status === 403) {
+          gestisciSessioneScaduta(data.message);
+          return;
+        }
         alert(data.message);
         if (concert) aggiornaViaggi(concert.title, concert.artist);
       })
@@ -167,13 +183,21 @@ export default function ConcertDetailPage() {
 
     fetch('http://localhost:3000/api/concerts/' + concertId + '/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json',
+      headers: { 
+        'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + localStorage.getItem('token')
-       },
+      },
       body: JSON.stringify({ userName: mittente, text: testoPulito })
     })
-      .then(function (res) { return res.json(); })
-      .then(function (data) {
+      .then(async function (res) {
+        const data = await res.json();
+        
+        // Controllo se il token è scaduto
+        if (res.status === 401 || res.status === 403) {
+          gestisciSessioneScaduta(data.message);
+          return;
+        }
+
         if (data.success) {
           const ultimoMessaggio = data.messages[data.messages.length - 1];
           if (socketRef.current) {
@@ -186,6 +210,8 @@ export default function ConcertDetailPage() {
             });
           }
           setTestoMessaggio('');
+        } else {
+          alert(data.message || "Errore nell'invio del messaggio.");
         }
       })
       .catch(function () {
@@ -201,10 +227,14 @@ export default function ConcertDetailPage() {
       headers: {
         'Authorization': 'Bearer ' + localStorage.getItem('token') 
       }
-
     })
-      .then(function (res) { return res.json(); })
-      .then(function (data) {
+      .then(async function (res) {
+        const data = await res.json();
+        if (res.status === 401 || res.status === 403) {
+          gestisciSessioneScaduta(data.message);
+          return;
+        }
+
         if (data.success) {
           if (socketRef.current) {
             socketRef.current.emit('delete_message', {
