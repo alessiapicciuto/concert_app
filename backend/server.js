@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const { Server } = require('socket.io');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 const User = require('./models/User');
 const Trip = require('./models/Trip');
@@ -30,7 +31,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/concert_a
 app.use(cors({ origin: 'http://localhost:5173' }));
 app.use(express.json());
 
-// ================= AUTENTICAZIONE =================
+//  AUTENTICAZIONE 
 
 app.post('/api/register', async (req, res) => {
   try {
@@ -45,10 +46,14 @@ app.post('/api/register', async (req, res) => {
       return res.status(400).json({ message: 'Email già registrata.' });
     }
 
+    // Cifratura della password con bcrypt
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
     const newUser = await User.create({
       name,
       email: emailClean,
-      password
+      password: hashedPassword
     });
 
     res.status(201).json({ 
@@ -68,8 +73,15 @@ app.post('/api/login', async (req, res) => {
     }
 
     const emailClean = String(email).toLowerCase();
-    const user = await User.findOne({ email: emailClean, password });
+    const user = await User.findOne({ email: emailClean });
+    
+    // Controllo se l'utente esiste e se la password corrisponde all'hash nel database
     if (!user) {
+      return res.status(401).json({ message: 'Credenziali non valide.' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
       return res.status(401).json({ message: 'Credenziali non valide.' });
     }
 
@@ -96,7 +108,7 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-// ================= ROTTA PER IL REFRESH TOKEN =================
+// ROTTA PER IL REFRESH TOKEN 
 app.post('/api/refresh-token', (req, res) => {
   const { refreshToken } = req.body;
   if (!refreshToken) {
@@ -118,7 +130,7 @@ app.post('/api/refresh-token', (req, res) => {
   });
 });
 
-// ================= GESTIONE VIAGGI =================
+// GESTIONE VIAGGI
 
 app.get('/api/trips', async (req, res) => {
   try {
@@ -290,7 +302,7 @@ app.post('/api/trips/:id/cancel-booking', verifyToken, async (req, res) => {
   }
 });
 
-// ================= GESTIONE CONCERTI (TICKETMASTER + DB SYNC) E CHAT =================
+//  GESTIONE CONCERTI (TICKETMASTER) E CHAT 
 
 app.get('/api/concerts', async (req, res) => {
   try {
@@ -327,7 +339,6 @@ app.get('/api/concerts', async (req, res) => {
       }
     }
 
-    // Restituisce TUTTI i concerti salvati nel database (evitando che quelli vecchi vengano nascosti)
     const concerts = await Concert.find();
     const mappedConcerts = concerts.map((c) => {
       const obj = c.toObject();
@@ -427,7 +438,7 @@ app.delete('/api/concerts/:id/messages/:msgId', verifyToken, async (req, res) =>
   }
 });
 
-// ================= SOCKET.IO =================
+// SOCKET.IO 
 
 io.on('connection', (socket) => {
   socket.on('join_trip', (tripId) => {
