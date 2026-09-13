@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import LoginView from '../components/LoginView';
 import { useAuth } from '../context/AuthContext';
 
+// Definiamo l'URL base: legge la variabile di Render o usa localhost come fallback locale
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
 export default function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuth(); 
@@ -21,7 +24,7 @@ export default function LoginPage() {
   function handleLogin(e) {
     e.preventDefault();
     setErroreLogin('');
-    fetch('http://localhost:3000/api/login', {
+    fetch(`${API_URL}/api/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: loginEmail, password: loginPassword })
@@ -30,9 +33,7 @@ export default function LoginPage() {
       .then(function (r) {
         if (!r.ok) return setErroreLogin(r.d.message);
         
-        // Passiamo utente, access token e refresh token al contesto/localStorage
         login(r.d.user, r.d.accessToken, r.d.refreshToken);
-        
         navigate('/profile');
       })
       .catch(function () { setErroreLogin('Errore di connessione'); });
@@ -41,7 +42,7 @@ export default function LoginPage() {
   function handleRegister(e) {
     e.preventDefault();
     setErroreRegistrazione('');
-    fetch('http://localhost:3000/api/register', {
+    fetch(`${API_URL}/api/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: regNome, email: regEmail, password: regPassword })
@@ -50,9 +51,7 @@ export default function LoginPage() {
       .then(function (r) {
         if (!r.ok) return setErroreRegistrazione(r.d.message);
         
-        // Se alla registrazione viene restituito il token, lo gestiamo, altrimenti passiamo null
         login(r.d.user, r.d.accessToken || null, r.d.refreshToken || null);
-        
         navigate('/profile');
       })
       .catch(function () { setErroreRegistrazione('Errore di connessione'); });

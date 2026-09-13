@@ -4,12 +4,13 @@ import { io } from 'socket.io-client';
 import ConcertDetailView from '../components/ConcertDetailView';
 import { useAuth } from '../context/AuthContext'; 
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
 export default function ConcertDetailPage() {
   const params = useParams();
   const concertId = params.id;
   const navigate = useNavigate();
 
-  // RECUPERIAMO USER, LOGOUT E LA NOSTRA AUTH-FETCH DAL CONTESTO GLOBALE
   const { user: currentUser, logout, authFetch } = useAuth();
 
   const [concert, setConcert] = useState(null);
@@ -22,7 +23,7 @@ export default function ConcertDetailPage() {
   const chatBoxRef = useRef(null);
 
   function aggiornaViaggi(titolo, artista) {
-    fetch('http://localhost:3000/api/trips')
+    fetch(`${API_URL}/api/trips`)
       .then(function (res) { return res.json(); })
       .then(function (tuttiTrips) {
         const tit = (titolo || '').toLowerCase();
@@ -49,7 +50,7 @@ export default function ConcertDetailPage() {
 
   useEffect(function () {
     const tripId = 'trip_' + concertId;
-    const socket = io('http://localhost:3000');
+    const socket = io(API_URL);
     socketRef.current = socket;
 
     socket.emit('join_trip', tripId);
@@ -73,7 +74,7 @@ export default function ConcertDetailPage() {
       });
     });
 
-    fetch('http://localhost:3000/api/concerts/' + concertId)
+    fetch(`${API_URL}/api/concerts/` + concertId)
       .then(function (res) { return res.json(); })
       .then(function (c) {
         setConcert(c);
@@ -87,7 +88,6 @@ export default function ConcertDetailPage() {
     return function () {
       socket.disconnect();
     };
-    //commento per hook
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [concertId]);
 
@@ -104,8 +104,7 @@ export default function ConcertDetailPage() {
       return;
     }
 
-    // USIAMO AUTH-FETCH
-    authFetch('http://localhost:3000/api/trips/' + idViaggio + '/book', {
+    authFetch(`${API_URL}/api/trips/` + idViaggio + '/book', {
       method: 'POST',
       body: JSON.stringify({
         userId: currentUser.id,
@@ -130,8 +129,7 @@ export default function ConcertDetailPage() {
   function annullaPassaggio(idViaggio) {
     if (!window.confirm('Vuoi davvero annullare la prenotazione di questo passaggio?')) return;
 
-    // USIAMO AUTH-FETCH
-    authFetch('http://localhost:3000/api/trips/' + idViaggio + '/cancel-booking', {
+    authFetch(`${API_URL}/api/trips/` + idViaggio + '/cancel-booking', {
       method: 'POST',
       body: JSON.stringify({ userId: currentUser.id })
     })
@@ -150,7 +148,7 @@ export default function ConcertDetailPage() {
       });
   }
 
- function inviaMessaggio() {
+  function inviaMessaggio() {
     if (!currentUser) {
       alert("Effettua prima l'accesso per partecipare alla chat.");
       navigate('/login');
@@ -162,8 +160,7 @@ export default function ConcertDetailPage() {
 
     const mittente = currentUser.name;
 
-    // USIAMO AUTH-FETCH
-    authFetch('http://localhost:3000/api/concerts/' + concertId + '/messages', {
+    authFetch(`${API_URL}/api/concerts/` + concertId + '/messages', {
       method: 'POST',
       body: JSON.stringify({ userName: mittente, text: testoPulito })
     })
@@ -173,9 +170,7 @@ export default function ConcertDetailPage() {
         if (data.success) {
           const ultimoMessaggio = data.messages[data.messages.length - 1];
           
-          // Generiamo la data odierna (es. 13/09/2026)
           const dataOggi = new Date().toLocaleDateString();
-          // Uniamo la data di oggi all'ora restituita dal server
           const dataOraCompleta = `${dataOggi} ${ultimoMessaggio.time}`;
 
           if (socketRef.current) {
@@ -183,7 +178,7 @@ export default function ConcertDetailPage() {
               tripId: 'trip_' + concertId,
               sender: mittente,
               text: testoPulito,
-              time: dataOraCompleta, // <-- Inviamo data e ora insieme
+              time: dataOraCompleta,
               msgId: ultimoMessaggio.id
             });
           }
@@ -205,8 +200,7 @@ export default function ConcertDetailPage() {
   function eliminaMessaggio(msgId) {
     if (!window.confirm('Sei sicuro di voler eliminare questo messaggio?')) return;
 
-    // USIAMO AUTH-FETCH
-    authFetch('http://localhost:3000/api/concerts/' + concertId + '/messages/' + msgId, {
+    authFetch(`${API_URL}/api/concerts/` + concertId + '/messages/' + msgId, {
       method: 'DELETE'
     })
       .then(async function (res) {

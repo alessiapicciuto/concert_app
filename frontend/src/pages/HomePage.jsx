@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import HomeView from '../components/HomeView';
-import { useAuth } from '../context/AuthContext'; // <-- 1. IMPORTIAMO USEAUTH
+import { useAuth } from '../context/AuthContext';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 export default function HomePage() {
-  // 2. RECUPERIAMO USER E LOGOUT DAL CONTESTO GLOBALE
   const { user: currentUser, logout } = useAuth();
 
   const [concerts, setConcerts] = useState([]);
@@ -11,7 +12,7 @@ export default function HomePage() {
   const [menuAperto, setMenuAperto] = useState(false);
 
   useEffect(function () {
-    fetch('http://localhost:3000/api/concerts')
+    fetch(`${API_URL}/api/concerts`)
       .then(function (res) { return res.json(); })
       .then(function (dati) { setConcerts(dati); })
       .catch(function () {});
@@ -19,7 +20,7 @@ export default function HomePage() {
 
   function eseguiLogout() {
     if (window.confirm('Sei sicuro di voler uscire?')) {
-      logout(); // <-- 3. USA LA FUNZIONE LOGOUT DEL CONTESTO
+      logout();
       setMenuAperto(false);
     }
   }

@@ -43,6 +43,10 @@ h2 {
 
 .campo {
   margin-bottom: 16px;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
 
 label {
@@ -97,15 +101,15 @@ button:hover {
 }
 
 .messaggio-esito {
-  color: #ef4444;
-  font-size: 13px;
-  font-weight: 500;
-  margin-top: 10px;
-  text-align: center;
-  background-color: #fef2f2;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid #fecaca;
+  color: #ef4444 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  margin-top: 10px !important;
+  text-align: center !important;
+  background-color: #fef2f2 !important;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+  border: 1px solid #fecaca !important;
 }
 
 .link-ritorno {
@@ -124,4 +128,19 @@ button:hover {
 .link-ritorno a:hover {
   color: #1d4ed8;
   text-decoration: underline;
+}
+
+/* Rimuove qualsiasi bordo, ombra o sfondo da form o div interni alla scheda */
+.scheda-viaggio form,
+.scheda-viaggio div:not(.messaggio-esito) {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.scheda-viaggio form {
+  padding: 0 !important;
+  margin: 0 !important;
 }

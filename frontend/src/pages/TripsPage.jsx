@@ -3,12 +3,13 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import TripsView from '../components/TripsView';
 import { useAuth } from '../context/AuthContext'; 
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
 export default function TripsPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const editId = searchParams.get('editId');
 
-  // RECUPERIAMO USER, LOGOUT E LA NOSTRA MAGICA AUTH-FETCH DAL CONTESTO GLOBALE
   const { user: currentUser, logout, authFetch } = useAuth();
 
   const [concertName, setConcertName] = useState('');
@@ -27,7 +28,7 @@ export default function TripsPage() {
       return;
     }
 
-    fetch('http://localhost:3000/api/concerts')
+    fetch(`${API_URL}/api/concerts`)
       .then(function (res) { return res.json(); })
       .then(function (dati) {
         setListaConcerti(dati);
@@ -35,7 +36,7 @@ export default function TripsPage() {
       .catch(function () {});
 
     if (editId) {
-      fetch('http://localhost:3000/api/trips')
+      fetch(`${API_URL}/api/trips`)
         .then(function (res) { return res.json(); })
         .then(function (tuttiIviaggi) {
           const tripTrovato = tuttiIviaggi.find(function (t) {
@@ -69,11 +70,10 @@ export default function TripsPage() {
     }
 
     const url = editId
-      ? 'http://localhost:3000/api/trips/' + editId
-      : 'http://localhost:3000/api/trips';
+      ? `${API_URL}/api/trips/` + editId
+      : `${API_URL}/api/trips`;
     const method = editId ? 'PUT' : 'POST';
 
-    //  Gestisce in automatico il token, il 401 e il refresh
     authFetch(url, {
       method: method,
       body: JSON.stringify({

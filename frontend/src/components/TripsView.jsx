@@ -23,7 +23,7 @@ export default function TripsView({
     <div className="trips-page">
       <div className="scheda-viaggio">
         <h2>{editId ? 'MODIFICA PASSAGGIO' : 'OFFRI UN PASSAGGIO'}</h2>
-
+      
         <form onSubmit={handleSubmit}>
           <div className="campo">
             <label>CONCERTO DI DESTINAZIONE</label>
