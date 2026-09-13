@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const { login } = useAuth(); // <-- Estratta la funzione login dal contesto globale
+  const { login } = useAuth(); 
   
   const [isRegistrazione, setIsRegistrazione] = useState(false);
 
@@ -30,9 +30,8 @@ export default function LoginPage() {
       .then(function (r) {
         if (!r.ok) return setErroreLogin(r.d.message);
         
-        // Usiamo la funzione login del contesto: 
-        // aggiorna sia lo stato globale React che il localStorage
-        login(r.d.user, r.d.token);
+        // Passiamo utente, access token e refresh token al contesto/localStorage
+        login(r.d.user, r.d.accessToken, r.d.refreshToken);
         
         navigate('/profile');
       })
@@ -51,9 +50,8 @@ export default function LoginPage() {
       .then(function (r) {
         if (!r.ok) return setErroreRegistrazione(r.d.message);
         
-        // Se il backend restituisce il token anche alla registrazione, passa r.d.token
-        // altrimenti passa r.d.token || null per registrare l'utente nel contesto
-        login(r.d.user, r.d.token || null);
+        // Se alla registrazione viene restituito il token, lo gestiamo, altrimenti passiamo null
+        login(r.d.user, r.d.accessToken || null, r.d.refreshToken || null);
         
         navigate('/profile');
       })

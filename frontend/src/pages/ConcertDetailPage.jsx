@@ -2,15 +2,15 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import ConcertDetailView from '../components/ConcertDetailView';
-import { useAuth } from '../context/AuthContext'; // <-- 1. IMPORTIAMO USEAUTH
+import { useAuth } from '../context/AuthContext'; 
 
 export default function ConcertDetailPage() {
   const params = useParams();
   const concertId = params.id;
   const navigate = useNavigate();
 
-  // 2. RECUPERIAMO USER, TOKEN E LOGOUT DAL CONTESTO GLOBALE
-  const { user: currentUser, token, logout } = useAuth();
+  // RECUPERIAMO USER, LOGOUT E LA NOSTRA AUTH-FETCH DAL CONTESTO GLOBALE
+  const { user: currentUser, logout, authFetch } = useAuth();
 
   const [concert, setConcert] = useState(null);
   const [trips, setTrips] = useState([]);
@@ -20,13 +20,6 @@ export default function ConcertDetailPage() {
 
   const socketRef = useRef(null);
   const chatBoxRef = useRef(null);
-
-  // 3. USIAMO LOGOUT() DEL CONTESTO PER RESETTARE LO STATO GLOBALE E IL LOCALSTORAGE
-  function gestisciSessioneScaduta(messaggio) {
-    alert(messaggio || "Token non valido o scaduto. Effettua nuovamente il login.");
-    logout(); 
-    navigate('/login');
-  }
 
   function aggiornaViaggi(titolo, artista) {
     fetch('http://localhost:3000/api/trips')
@@ -94,6 +87,7 @@ export default function ConcertDetailPage() {
     return function () {
       socket.disconnect();
     };
+    //commento per hook
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [concertId]);
 
@@ -110,12 +104,9 @@ export default function ConcertDetailPage() {
       return;
     }
 
-    fetch('http://localhost:3000/api/trips/' + idViaggio + '/book', {
+    // USIAMO AUTH-FETCH
+    authFetch('http://localhost:3000/api/trips/' + idViaggio + '/book', {
       method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token // <-- USA IL TOKEN DAL CONTESTO
-      },
       body: JSON.stringify({
         userId: currentUser.id,
         userName: currentUser.name
@@ -123,40 +114,39 @@ export default function ConcertDetailPage() {
     })
       .then(async function (res) {
         const data = await res.json();
-        if (res.status === 401 || res.status === 403) {
-          gestisciSessioneScaduta(data.message);
-          return;
-        }
         alert(data.message);
         if (concert) aggiornaViaggi(concert.title, concert.artist);
       })
-      .catch(function () {
-        alert('Errore durante la prenotazione.');
+      .catch(function (err) {
+        if (err.message && err.message.includes('Sessione scaduta')) {
+          logout();
+          navigate('/login');
+        } else {
+          alert('Errore durante la prenotazione.');
+        }
       });
   }
 
   function annullaPassaggio(idViaggio) {
     if (!window.confirm('Vuoi davvero annullare la prenotazione di questo passaggio?')) return;
 
-    fetch('http://localhost:3000/api/trips/' + idViaggio + '/cancel-booking', {
+    // USIAMO AUTH-FETCH
+    authFetch('http://localhost:3000/api/trips/' + idViaggio + '/cancel-booking', {
       method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token // <-- USA IL TOKEN DAL CONTESTO
-      },
       body: JSON.stringify({ userId: currentUser.id })
     })
       .then(async function (res) {
         const data = await res.json();
-        if (res.status === 401 || res.status === 403) {
-          gestisciSessioneScaduta(data.message);
-          return;
-        }
         alert(data.message);
         if (concert) aggiornaViaggi(concert.title, concert.artist);
       })
-      .catch(function () {
-        alert("Errore durante l'annullamento.");
+      .catch(function (err) {
+        if (err.message && err.message.includes('Sessione scaduta')) {
+          logout();
+          navigate('/login');
+        } else {
+          alert("Errore durante l'annullamento.");
+        }
       });
   }
 
@@ -172,21 +162,13 @@ export default function ConcertDetailPage() {
 
     const mittente = currentUser.name;
 
-    fetch('http://localhost:3000/api/concerts/' + concertId + '/messages', {
+    // USIAMO AUTH-FETCH
+    authFetch('http://localhost:3000/api/concerts/' + concertId + '/messages', {
       method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token // <-- USA IL TOKEN DAL CONTESTO
-      },
       body: JSON.stringify({ userName: mittente, text: testoPulito })
     })
       .then(async function (res) {
         const data = await res.json();
-        
-        if (res.status === 401 || res.status === 403) {
-          gestisciSessioneScaduta(data.message);
-          return;
-        }
 
         if (data.success) {
           const ultimoMessaggio = data.messages[data.messages.length - 1];
@@ -204,26 +186,25 @@ export default function ConcertDetailPage() {
           alert(data.message || "Errore nell'invio del messaggio.");
         }
       })
-      .catch(function () {
-        alert("Errore nell'invio del messaggio.");
+      .catch(function (err) {
+        if (err.message && err.message.includes('Sessione scaduta')) {
+          logout();
+          navigate('/login');
+        } else {
+          alert("Errore nell'invio del messaggio.");
+        }
       });
   }
 
   function eliminaMessaggio(msgId) {
     if (!window.confirm('Sei sicuro di voler eliminare questo messaggio?')) return;
 
-    fetch('http://localhost:3000/api/concerts/' + concertId + '/messages/' + msgId, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': 'Bearer ' + token // <-- USA IL TOKEN DAL CONTESTO
-      }
+    // USIAMO AUTH-FETCH
+    authFetch('http://localhost:3000/api/concerts/' + concertId + '/messages/' + msgId, {
+      method: 'DELETE'
     })
       .then(async function (res) {
         const data = await res.json();
-        if (res.status === 401 || res.status === 403) {
-          gestisciSessioneScaduta(data.message);
-          return;
-        }
 
         if (data.success) {
           if (socketRef.current) {
@@ -237,8 +218,13 @@ export default function ConcertDetailPage() {
           });
         }
       })
-      .catch(function () {
-        alert("Errore durante l'eliminazione.");
+      .catch(function (err) {
+        if (err.message && err.message.includes('Sessione scaduta')) {
+          logout();
+          navigate('/login');
+        } else {
+          alert("Errore durante l'eliminazione.");
+        }
       });
   }
 

@@ -9,7 +9,7 @@ const jwt = require('jsonwebtoken');
 const User = require('./models/User');
 const Trip = require('./models/Trip');
 const Concert = require('./models/Concert');
-const verifyToken = require('./middleware/auth'); // <-- Importato il middleware JWT
+const verifyToken = require('./middleware/auth'); 
 
 const app = express();
 const server = http.createServer(app);
@@ -73,21 +73,52 @@ app.post('/api/login', async (req, res) => {
       return res.status(401).json({ message: 'Credenziali non valide.' });
     }
 
-    // GENERAZIONE DELL'ACCESS TOKEN
-    const token = jwt.sign(
+    // ACCESS TOKEN ( 1m per test poi 20m)
+    const accessToken = jwt.sign(
       { userId: user._id.toString(), email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: '20m' }
+      { expiresIn: '1m' }
+    );
+
+    // REFHRESH TOKEN durata 7 giorni
+    const refreshToken = jwt.sign(
+      { userId: user._id.toString(), email: user.email },
+      process.env.JWT_REFRESH_SECRET,
+      { expiresIn: '7d' }
     );
 
     res.json({ 
       message: 'Accesso eseguito con successo', 
-      token, // <-- Restituisce il token al frontend
+      accessToken, 
+      refreshToken, 
       user: { id: user._id.toString(), name: user.name, email: user.email } 
     });
   } catch (err) {
     res.status(500).json({ message: 'Errore interno del server.' });
   }
+});
+
+// ================= ROTTA PER IL REFRESH TOKEN =================
+app.post('/api/refresh-token', (req, res) => {
+  const { refreshToken } = req.body;
+  if (!refreshToken) {
+    return res.status(401).json({ message: 'Refresh Token mancante.' });
+  }
+
+  jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ message: 'Refresh Token non valido o scaduto.' });
+    }
+
+    //  nuovo Access Token
+    const newAccessToken = jwt.sign(
+      { userId: user.userId, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '1m' }
+    );
+
+    res.json({ accessToken: newAccessToken });
+  });
 });
 
 // ================= GESTIONE VIAGGI =================
@@ -106,7 +137,6 @@ app.get('/api/trips', async (req, res) => {
   }
 });
 
-// Esempio di rotta protetta con il middleware (es. creare un viaggio richiede il token)
 app.post('/api/trips', verifyToken, async (req, res) => {
   try {
     const { 

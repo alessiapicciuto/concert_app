@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import TripsView from '../components/TripsView';
-import { useAuth } from '../context/AuthContext'; // <-- 1. IMPORTIAMO USEAUTH
+import { useAuth } from '../context/AuthContext'; 
 
 export default function TripsPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const editId = searchParams.get('editId');
 
-  // 2. RECUPERIAMO USER, TOKEN E LOGOUT DAL CONTESTO GLOBALE
-  const { user: currentUser, token, logout } = useAuth();
+  // RECUPERIAMO USER, LOGOUT E LA NOSTRA MAGICA AUTH-FETCH DAL CONTESTO GLOBALE
+  const { user: currentUser, logout, authFetch } = useAuth();
 
   const [concertName, setConcertName] = useState('');
   const [departureCity, setDepartureCity] = useState('');
@@ -20,13 +20,6 @@ export default function TripsPage() {
   const [errore, setErrore] = useState('');
 
   const [listaConcerti, setListaConcerti] = useState([]);
-
-  // Funzione di utilità per gestire i token scaduti
-  function gestisciSessioneScaduta(messaggio) {
-    alert(messaggio || "Token non valido o scaduto. Effettua nuovamente il login.");
-    logout();
-    navigate('/login');
-  }
 
   useEffect(function () {
     if (!currentUser) {
@@ -41,7 +34,6 @@ export default function TripsPage() {
       })
       .catch(function () {});
 
-    // Preleva i dati filtrando dalla lista generale dei viaggi
     if (editId) {
       fetch('http://localhost:3000/api/trips')
         .then(function (res) { return res.json(); })
@@ -81,12 +73,9 @@ export default function TripsPage() {
       : 'http://localhost:3000/api/trips';
     const method = editId ? 'PUT' : 'POST';
 
-    fetch(url, {
+    //  Gestisce in automatico il token, il 401 e il refresh
+    authFetch(url, {
       method: method,
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token // <-- USA IL TOKEN DAL CONTESTO
-      },
       body: JSON.stringify({
         driverId: currentUser.id,
         driverName: currentUser.name,
@@ -101,20 +90,18 @@ export default function TripsPage() {
       .then(async function (res) {
         const data = await res.json();
 
-        // Controllo della validità del token
-        if (res.status === 401 || res.status === 403) {
-          gestisciSessioneScaduta(data.message);
-          return;
-        }
-
         if (data.success || data.trip || !data.error) {
           navigate('/profile');
         } else {
           setErrore(data.message || 'Errore nel salvataggio del viaggio');
         }
       })
-      .catch(function () {
-        setErrore('Errore di connessione al server');
+      .catch(function (err) {
+        setErrore(err.message || 'Errore di connessione al server');
+        if (err.message && err.message.includes('Sessione scaduta')) {
+          logout();
+          navigate('/login');
+        }
       });
   }
 
