@@ -77,7 +77,7 @@ app.post('/api/login', async (req, res) => {
     const accessToken = jwt.sign(
       { userId: user._id.toString(), email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: '1m' }
+      { expiresIn: '20m' }
     );
 
     // REFHRESH TOKEN durata 7 giorni
@@ -114,7 +114,7 @@ app.post('/api/refresh-token', (req, res) => {
     const newAccessToken = jwt.sign(
       { userId: user.userId, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: '1m' }
+      { expiresIn: '20m' }
     );
 
     res.json({ accessToken: newAccessToken });
