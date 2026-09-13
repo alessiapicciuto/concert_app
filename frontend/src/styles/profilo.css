@@ -143,7 +143,7 @@
   line-height: 1.5;
 }
 
-/* Contenitore dei bottoni interni alle card (CENTRATI) */
+/* contenitore dei bottoni interni alle card (CENTRATI) */
 .azioni-viaggio {
   margin-top: 14px;
   display: flex;
@@ -151,7 +151,7 @@
   justify-content: center;
 }
 
-/* Impedisce ai bottoni singoli di occupare tutta la riga */
+/* Impedisce ai bottoni di occupare tutta la riga */
 .azioni-viaggio button {
   width: auto;
   flex: initial;
@@ -221,4 +221,23 @@
 .btn-logout:hover {
   background-color: #dc2626;
   box-shadow: 0 4px 10px rgba(239, 68, 68, 0.25);
+}
+
+/* rimozione del bordo bianco intorno ai pulsanti crea viaggio o prenota viaggio */
+.scheda > div:not(.lista-viaggi):not(.scheda-viaggio-singolo),
+.scheda .box-logout-bottom {
+  background-color: transparent !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+/* toglie il bordo intorno al bottone disconnetti */
+.box-logout-bottom,
+.btn-logout ~ *,
+div:has(> .btn-logout) {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }

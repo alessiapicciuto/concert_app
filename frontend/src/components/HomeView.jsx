@@ -53,6 +53,21 @@ export default function HomeView({
           const idConcerto = c.id || c._id;
           return (
             <div className="card" key={idConcerto}>
+              {/* AGGIUNTA DELL'IMMAGINE DI TICKETMASTER */}
+              {c.imageUrl && (
+                <img 
+                  src={c.imageUrl} 
+                  alt={c.title || c.artist} 
+                  style={{ 
+                    width: '1000px', 
+                    height: '160px', 
+                    objectFit: 'cover', 
+                    borderRadius: '6px', 
+                    marginBottom: '10px' 
+                  }} 
+                />
+              )}
+
               <div>
                 <h3>{c.title || c.artist}</h3>
                 <p>{c.city} ({c.venue})</p>

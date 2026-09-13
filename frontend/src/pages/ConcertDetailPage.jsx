@@ -150,7 +150,7 @@ export default function ConcertDetailPage() {
       });
   }
 
-  function inviaMessaggio() {
+ function inviaMessaggio() {
     if (!currentUser) {
       alert("Effettua prima l'accesso per partecipare alla chat.");
       navigate('/login');
@@ -172,12 +172,18 @@ export default function ConcertDetailPage() {
 
         if (data.success) {
           const ultimoMessaggio = data.messages[data.messages.length - 1];
+          
+          // Generiamo la data odierna (es. 13/09/2026)
+          const dataOggi = new Date().toLocaleDateString();
+          // Uniamo la data di oggi all'ora restituita dal server
+          const dataOraCompleta = `${dataOggi} ${ultimoMessaggio.time}`;
+
           if (socketRef.current) {
             socketRef.current.emit('send_message', {
               tripId: 'trip_' + concertId,
               sender: mittente,
               text: testoPulito,
-              time: ultimoMessaggio.time,
+              time: dataOraCompleta, // data e ora insieme
               msgId: ultimoMessaggio.id
             });
           }

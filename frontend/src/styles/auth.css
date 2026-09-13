@@ -4,6 +4,7 @@
   align-items: center;
   min-height: 100vh;
   padding: 20px;
+  background-color: #f1f5f9;
 }
 
 .scheda-autenticazione {
@@ -11,7 +12,7 @@
   padding: 32px 28px;
   border-radius: 16px;
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
   border: 1px solid #e2e8f0;
   box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
 }
@@ -26,6 +27,10 @@
 
 .campo {
   margin-bottom: 16px;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
 
 .campo label {
@@ -41,7 +46,7 @@
   padding: 11px 14px;
   border-radius: 10px;
   border: 1px solid #cbd5e1;
-  background-color: #f8fafc;
+  background-color: #f8fafc; /* Il box chiaro della singola riga */
   color: #0f172a;
   font-size: 14px;
   outline: none;
@@ -107,4 +112,13 @@
   padding: 8px 12px;
   border-radius: 8px;
   border: 1px solid #fecaca;
+}
+/* Rimuove qualsiasi bordo, ombra o sfondo da form o div interni alla scheda */
+.scheda-autenticazione form,
+.scheda-autenticazione div {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }

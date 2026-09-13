@@ -73,14 +73,12 @@ app.post('/api/login', async (req, res) => {
       return res.status(401).json({ message: 'Credenziali non valide.' });
     }
 
-    // ACCESS TOKEN ( 1m per test poi 20m)
     const accessToken = jwt.sign(
       { userId: user._id.toString(), email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: '20m' }
     );
 
-    // REFHRESH TOKEN durata 7 giorni
     const refreshToken = jwt.sign(
       { userId: user._id.toString(), email: user.email },
       process.env.JWT_REFRESH_SECRET,
@@ -110,7 +108,6 @@ app.post('/api/refresh-token', (req, res) => {
       return res.status(403).json({ message: 'Refresh Token non valido o scaduto.' });
     }
 
-    //  nuovo Access Token
     const newAccessToken = jwt.sign(
       { userId: user.userId, email: user.email },
       process.env.JWT_SECRET,
@@ -293,18 +290,53 @@ app.post('/api/trips/:id/cancel-booking', verifyToken, async (req, res) => {
   }
 });
 
-// ================= GESTIONE CONCERTI E CHAT =================
+// ================= GESTIONE CONCERTI (TICKETMASTER + DB SYNC) E CHAT =================
 
 app.get('/api/concerts', async (req, res) => {
   try {
-    const concerts = await Concert.find();
-    const mappedConcerts = concerts.map((c) => {
-      const obj = c.toObject();
-      obj.id = obj._id.toString();
-      return obj;
-    });
-    res.json(mappedConcerts);
+    const apiKey = process.env.TICKETMASTER_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ message: 'Chiave API di Ticketmaster mancante.' });
+    }
+
+    const url = `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${apiKey}&classificationName=Music&countryCode=IT&size=20`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data._embedded && data._embedded.events) {
+      const mappedConcerts = [];
+
+      for (const event of data._embedded.events) {
+        const venueInfo = event._embedded?.venues?.[0];
+        const classification = event.classifications?.[0];
+
+        const concertData = {
+          title: event.name,
+          city: venueInfo?.city?.name || 'Città non specificata',
+          venue: venueInfo?.name || 'Luogo non specificato',
+          date: event.dates?.start?.localDate || 'Data da definire',
+          genre: classification?.genre?.name || 'Musica',
+          imageUrl: event.images?.[0]?.url || ''
+        };
+
+        // Salva o aggiorna automaticamente il concerto su MongoDB così da avere un _id valido per le chat
+        const savedConcert = await Concert.findOneAndUpdate(
+          { title: concertData.title, date: concertData.date },
+          concertData,
+          { upsert: true, new: true, setDefaultsOnInsert: true }
+        );
+
+        const obj = savedConcert.toObject();
+        obj.id = obj._id.toString();
+        mappedConcerts.push(obj);
+      }
+
+      res.json(mappedConcerts);
+    } else {
+      res.json([]);
+    }
   } catch (err) {
+    console.error('Errore Ticketmaster:', err);
     res.status(500).json({ message: 'Errore nel recupero dei concerti.' });
   }
 });
@@ -344,14 +376,18 @@ app.post('/api/concerts/:id/messages', verifyToken, async (req, res) => {
       concert.messages = [];
     }
 
-    const timeString = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    concert.messages.push({
-      userName,
-      text,
-      time: timeString
-    });
+const now = new Date();
+const dataString = now.toLocaleDateString(); 
+const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-    await concert.save();
+const nuovoMessaggio = {
+  userName,
+  text,
+  time: `${dataString} - ${timeString}` 
+};
+
+concert.messages.push(nuovoMessaggio);
+await concert.save();
 
     const messagesFormatted = concert.messages.map((m) => {
       const mObj = m.toObject ? m.toObject() : m;
