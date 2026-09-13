@@ -15,9 +15,31 @@ const verifyToken = require('./middleware/auth');
 const app = express();
 const server = http.createServer(app);
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  /\.onrender\.com$/
+];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    const allowed = allowedOrigins.some(pattern => {
+      if (pattern instanceof RegExp) return pattern.test(origin);
+      return pattern === origin;
+    });
+    if (allowed) {
+      callback(null, true);
+    } else {
+      callback(new Error('Bloccato dalla policy CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+};
+
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:5173',
+    origin: corsOptions.origin,
     methods: ['GET', 'POST', 'PUT', 'DELETE']
   }
 });
@@ -28,10 +50,10 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/concert_a
   .then(() => console.log('Connesso con successo a MongoDB'))
   .catch((err) => console.error('Errore di connessione a MongoDB:', err));
 
-app.use(cors({ origin: 'http://localhost:5173' }));
+app.use(cors(corsOptions));
 app.use(express.json());
 
-//  AUTENTICAZIONE 
+// ================= AUTENTICAZIONE =================
 
 app.post('/api/register', async (req, res) => {
   try {
@@ -46,7 +68,6 @@ app.post('/api/register', async (req, res) => {
       return res.status(400).json({ message: 'Email già registrata.' });
     }
 
-    // Cifratura della password con bcrypt
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
@@ -75,7 +96,6 @@ app.post('/api/login', async (req, res) => {
     const emailClean = String(email).toLowerCase();
     const user = await User.findOne({ email: emailClean });
     
-    // Controllo se l'utente esiste e se la password corrisponde all'hash nel database
     if (!user) {
       return res.status(401).json({ message: 'Credenziali non valide.' });
     }
@@ -108,7 +128,7 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-// ROTTA PER IL REFRESH TOKEN 
+// ================= ROTTA PER IL REFRESH TOKEN =================
 app.post('/api/refresh-token', (req, res) => {
   const { refreshToken } = req.body;
   if (!refreshToken) {
@@ -130,7 +150,7 @@ app.post('/api/refresh-token', (req, res) => {
   });
 });
 
-// GESTIONE VIAGGI
+// ================= GESTIONE VIAGGI =================
 
 app.get('/api/trips', async (req, res) => {
   try {
@@ -302,7 +322,7 @@ app.post('/api/trips/:id/cancel-booking', verifyToken, async (req, res) => {
   }
 });
 
-//  GESTIONE CONCERTI (TICKETMASTER) E CHAT 
+// ================= GESTIONE CONCERTI (TICKETMASTER) E CHAT =================
 
 app.get('/api/concerts', async (req, res) => {
   try {
@@ -438,7 +458,7 @@ app.delete('/api/concerts/:id/messages/:msgId', verifyToken, async (req, res) =>
   }
 });
 
-// SOCKET.IO 
+// ================= SOCKET.IO =================
 
 io.on('connection', (socket) => {
   socket.on('join_trip', (tripId) => {
