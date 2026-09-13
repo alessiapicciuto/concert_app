@@ -183,7 +183,7 @@ export default function ConcertDetailPage() {
               tripId: 'trip_' + concertId,
               sender: mittente,
               text: testoPulito,
-              time: dataOraCompleta, // data e ora insieme
+              time: dataOraCompleta, // <-- Inviamo data e ora insieme
               msgId: ultimoMessaggio.id
             });
           }

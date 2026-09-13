@@ -295,48 +295,49 @@ app.post('/api/trips/:id/cancel-booking', verifyToken, async (req, res) => {
 app.get('/api/concerts', async (req, res) => {
   try {
     const apiKey = process.env.TICKETMASTER_API_KEY;
-    if (!apiKey) {
-      return res.status(500).json({ message: 'Chiave API di Ticketmaster mancante.' });
-    }
+    if (apiKey) {
+      try {
+        const url = `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${apiKey}&classificationName=Music&countryCode=IT&size=20`;
+        const response = await fetch(url);
+        const data = await response.json();
 
-    const url = `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${apiKey}&classificationName=Music&countryCode=IT&size=20`;
-    const response = await fetch(url);
-    const data = await response.json();
+        if (data._embedded && data._embedded.events) {
+          for (const event of data._embedded.events) {
+            const venueInfo = event._embedded?.venues?.[0];
+            const classification = event.classifications?.[0];
 
-    if (data._embedded && data._embedded.events) {
-      const mappedConcerts = [];
+            const concertData = {
+              title: event.name,
+              city: venueInfo?.city?.name || 'Città non specificata',
+              venue: venueInfo?.name || 'Luogo non specificato',
+              date: event.dates?.start?.localDate || 'Data da definire',
+              genre: classification?.genre?.name || 'Musica',
+              imageUrl: event.images?.[0]?.url || ''
+            };
 
-      for (const event of data._embedded.events) {
-        const venueInfo = event._embedded?.venues?.[0];
-        const classification = event.classifications?.[0];
-
-        const concertData = {
-          title: event.name,
-          city: venueInfo?.city?.name || 'Città non specificata',
-          venue: venueInfo?.name || 'Luogo non specificato',
-          date: event.dates?.start?.localDate || 'Data da definire',
-          genre: classification?.genre?.name || 'Musica',
-          imageUrl: event.images?.[0]?.url || ''
-        };
-
-        // Salva o aggiorna automaticamente il concerto su MongoDB così da avere un _id valido per le chat
-        const savedConcert = await Concert.findOneAndUpdate(
-          { title: concertData.title, date: concertData.date },
-          concertData,
-          { upsert: true, new: true, setDefaultsOnInsert: true }
-        );
-
-        const obj = savedConcert.toObject();
-        obj.id = obj._id.toString();
-        mappedConcerts.push(obj);
+            await Concert.findOneAndUpdate(
+              { title: concertData.title, date: concertData.date },
+              concertData,
+              { upsert: true, new: true, setDefaultsOnInsert: true }
+            );
+          }
+        }
+      } catch (tmErr) {
+        console.error('Errore non bloccante Ticketmaster:', tmErr);
       }
-
-      res.json(mappedConcerts);
-    } else {
-      res.json([]);
     }
+
+    // Restituisce TUTTI i concerti salvati nel database (evitando che quelli vecchi vengano nascosti)
+    const concerts = await Concert.find();
+    const mappedConcerts = concerts.map((c) => {
+      const obj = c.toObject();
+      obj.id = obj._id.toString();
+      return obj;
+    });
+
+    res.json(mappedConcerts);
   } catch (err) {
-    console.error('Errore Ticketmaster:', err);
+    console.error('Errore recupero concerti:', err);
     res.status(500).json({ message: 'Errore nel recupero dei concerti.' });
   }
 });
@@ -376,18 +377,18 @@ app.post('/api/concerts/:id/messages', verifyToken, async (req, res) => {
       concert.messages = [];
     }
 
-const now = new Date();
-const dataString = now.toLocaleDateString(); 
-const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const now = new Date();
+    const dataString = now.toLocaleDateString(); 
+    const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-const nuovoMessaggio = {
-  userName,
-  text,
-  time: `${dataString} - ${timeString}` 
-};
+    const nuovoMessaggio = {
+      userName,
+      text,
+      time: `${dataString} - ${timeString}` 
+    };
 
-concert.messages.push(nuovoMessaggio);
-await concert.save();
+    concert.messages.push(nuovoMessaggio);
+    await concert.save();
 
     const messagesFormatted = concert.messages.map((m) => {
       const mObj = m.toObject ? m.toObject() : m;

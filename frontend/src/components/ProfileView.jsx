@@ -112,7 +112,7 @@ export default function ProfileView({
         </div>
 
         {/* Bottone Disconnetti */}
-        <div className="box-logout-bottom">
+        <div style={{ textAlign: 'center', marginTop: '20px' }}>
           <button className="btn-logout" onClick={onLogout}>
             DISCONNETTI
           </button>

@@ -12,8 +12,15 @@ export default function HomeView({
 }) {
   return (
     <div className="home-wrapper">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h1 style={{ margin: 0 }}>CATALOGO CONCERTI</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+        <div style={{ textAlign: 'left' }}>
+          <h1 style={{ fontSize: '2rem', fontWeight: '800', color: 'var(--text-main)', margin: 0, letterSpacing: '-0.02em', textAlign: 'left' }}>
+            CATALOGO CONCERTI
+          </h1>
+          <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', margin: '4px 0 0 0', textAlign: 'left' }}>
+            Trova i tuoi compagni di viaggio e condividi l'esperienza dei tuoi concerti preferiti!
+          </p>
+        </div>
 
         <div>
           {currentUser ? (
@@ -53,13 +60,12 @@ export default function HomeView({
           const idConcerto = c.id || c._id;
           return (
             <div className="card" key={idConcerto}>
-              {/* AGGIUNTA DELL'IMMAGINE DI TICKETMASTER */}
               {c.imageUrl && (
                 <img 
                   src={c.imageUrl} 
                   alt={c.title || c.artist} 
                   style={{ 
-                    width: '1000px', 
+                    width: '100%', 
                     height: '160px', 
                     objectFit: 'cover', 
                     borderRadius: '6px', 
