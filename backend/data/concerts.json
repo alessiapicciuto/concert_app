@@ -1,32 +1,26 @@
 [
   {
-    "id": "1",
-    "title": "Coldplay - Music of the Spheres",
+    "title": "Coldplay - Music of the Spheres Tour",
     "city": "Napoli",
     "venue": "Stadio Diego Armando Maradona",
     "date": "2026-11-15",
-    "genre": "Pop/Rock",
-    "messages": []
+    "genre": "Pop/Rock"
   },
   {
-    "id": "2",
     "title": "Dua Lipa - Radical Optimism Tour",
     "city": "Milano",
     "venue": "Unipol Forum",
     "date": "2026-10-05",
-    "genre": "Pop",
-    "messages": []
+    "genre": "Pop"
   },
   {
-    "id": "3",
-    "title": "Marracash - Palasport 2026",
+    "title": "Marracash - Marra Stadi 2026",
     "city": "Roma",
-    "venue": "Palazzo dello Sport",
+    "venue": "Stadio Olimpico",
     "date": "2026-12-20",
     "genre": "Rap"
   },
   {
-    "id": "4",
     "title": "Imagine Dragons - Loom World Tour",
     "city": "Torino",
     "venue": "Inalpi Arena",
@@ -34,16 +28,13 @@
     "genre": "Alternative Rock"
   },
   {
-    "id": "5",
     "title": "Cesare Cremonini - Live 2026",
     "city": "Bologna",
     "venue": "Unipol Arena",
     "date": "2026-12-04",
-    "genre": "Pop Italiano",
-    "messages": []
+    "genre": "Pop Italiano"
   },
   {
-    "id": "6",
     "title": "Marco Mengoni - In Stadi & Palasport",
     "city": "Firenze",
     "venue": "Nelson Mandela Forum",
@@ -51,27 +42,171 @@
     "genre": "Pop"
   },
   {
-    "id": "7",
-    "title": "Pinguini Tattici Nucleari - Stadi 2026",
-    "city": "Verona",
-    "venue": "Arena di Verona",
-    "date": "2026-09-25",
+    "title": "Pinguini Tattici Nucleari - Tour Indoor 2026",
+    "city": "Milano",
+    "venue": "Unipol Forum",
+    "date": "2026-11-12",
     "genre": "Indie Pop"
   },
   {
-    "id": "8",
-    "title": "Green Day - Saviors World Tour",
+    "title": "Green Day - Saviors Tour",
     "city": "Milano",
-    "venue": "Ippodromo San Siro",
-    "date": "2026-10-18",
+    "venue": "Ippodromo SNAI La Maura",
+    "date": "2026-10-15",
     "genre": "Punk Rock"
   },
   {
-    "id": "9",
     "title": "Annalisa - Tutti nel Vortex",
     "city": "Padova",
     "venue": "Kioene Arena",
-    "date": "2026-12-12",
+    "date": "2026-10-22",
+    "genre": "Pop"
+  },
+  {
+    "title": "Geolier - Live Palasport 2026",
+    "city": "Napoli",
+    "venue": "PalaPartenope",
+    "date": "2026-11-25",
+    "genre": "Rap/Trap"
+  },
+  {
+    "title": "Sfera Ebbasta - Persona World Tour",
+    "city": "Roma",
+    "venue": "Palazzo dello Sport",
+    "date": "2026-10-18",
+    "genre": "Trap"
+  },
+  {
+    "title": "Max Pezzali - Max Forever Palasport",
+    "city": "Torino",
+    "venue": "Inalpi Arena",
+    "date": "2026-11-08",
+    "genre": "Pop Italiano"
+  },
+  {
+    "title": "Lazza - Locura Tour 2026",
+    "city": "Milano",
+    "venue": "Unipol Forum",
+    "date": "2026-09-29",
+    "genre": "Rap"
+  },
+  {
+    "title": "Ultimo - Palasport 2026",
+    "city": "Roma",
+    "venue": "Palazzo dello Sport",
+    "date": "2026-12-10",
+    "genre": "Pop Cantautorale"
+  },
+  {
+    "title": "Elodie - Live 2026",
+    "city": "Bari",
+    "venue": "PalaFlorio",
+    "date": "2026-11-10",
     "genre": "Pop/Dance"
+  },
+  {
+    "title": "Tedua - La Divina Commedia Tour",
+    "city": "Genova",
+    "venue": "Stadium Genova",
+    "date": "2026-11-05",
+    "genre": "Rap"
+  },
+  {
+    "title": "Ed Sheeran - Autumn Tour",
+    "city": "Roma",
+    "venue": "Palazzo dello Sport",
+    "date": "2026-10-14",
+    "genre": "Pop/Acoustic"
+  },
+  {
+    "title": "AC/DC - POWER UP European Tour",
+    "city": "Bologna",
+    "venue": "Unipol Arena",
+    "date": "2026-11-20",
+    "genre": "Hard Rock"
+  },
+  {
+    "title": "Laura Pausini - World Tour 2026",
+    "city": "Eboli",
+    "venue": "PalaSele",
+    "date": "2026-12-12",
+    "genre": "Pop"
+  },
+  {
+    "title": "Guè - Madreperla Tour",
+    "city": "Milano",
+    "venue": "Unipol Forum",
+    "date": "2026-10-14",
+    "genre": "Rap"
+  },
+  {
+    "title": "Rose Villain - Radio Sakura Tour",
+    "city": "Napoli",
+    "venue": "Casa della Musica",
+    "date": "2026-10-25",
+    "genre": "Urban Pop"
+  },
+  {
+    "title": "Irama - No Stress Tour",
+    "city": "Firenze",
+    "venue": "Nelson Mandela Forum",
+    "date": "2026-11-19",
+    "genre": "Pop"
+  },
+  {
+    "title": "Billie Eilish - Hit Me Hard and Soft Tour",
+    "city": "Bologna",
+    "venue": "Unipol Arena",
+    "date": "2026-10-08",
+    "genre": "Alt-Pop"
+  },
+  {
+    "title": "Ligabue - Dedicato a Noi Tour",
+    "city": "Catania",
+    "venue": "PalaCatania",
+    "date": "2026-11-20",
+    "genre": "Rock Italiano"
+  },
+  {
+    "title": "Gigi D'Alessio - Palasport 2026",
+    "city": "Palermo",
+    "venue": "PalaGiotto",
+    "date": "2026-12-05",
+    "genre": "Pop/Neomelodico"
+  },
+  {
+    "title": "Tananai - CalmoCobra Tour",
+    "city": "Roma",
+    "venue": "Palazzo dello Sport",
+    "date": "2026-11-02",
+    "genre": "Pop"
+  },
+  {
+    "title": "Zucchero - Overdose D'Amore Tour",
+    "city": "Ancona",
+    "venue": "PalaPrometeo",
+    "date": "2026-11-30",
+    "genre": "Blues/Rock"
+  },
+  {
+    "title": "Caparezza - Exuvia Tour 2026",
+    "city": "Bari",
+    "venue": "PalaFlorio",
+    "date": "2026-12-01",
+    "genre": "Hip Hop/Alternative"
+  },
+  {
+    "title": "Mahmood - European Tour",
+    "city": "Milano",
+    "venue": "Unipol Forum",
+    "date": "2026-10-29",
+    "genre": "R&B/Pop"
+  },
+  {
+    "title": "Vasco Rossi - Vasco Live Indoor 2026",
+    "city": "Milano",
+    "venue": "Unipol Forum",
+    "date": "2026-12-18",
+    "genre": "Rock Italiano"
   }
 ]

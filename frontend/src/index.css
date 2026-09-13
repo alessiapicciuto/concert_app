@@ -1,12 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg-main: #f1f5f9;         /* Sfondo chiaro, pulito e moderno */
+  --card-bg: #ffffff;         /* Sfondo bianco per i box */
+  --card-border: #e2e8f0;     /* Bordo leggero e discreto */
+  --input-bg: #f8fafc;        /* Sfondo dei campi di testo */
+  
+  --primary: #2563eb;         /* Blu elegante (non ciano neon) */
+  --primary-hover: #1d4ed8;
+  
+  --success: #059669;         /* Verde smeraldo morbido per Prenota */
+  --success-hover: #047857;
+  
+  --danger: #ef4444;          /* Rosso morbido per Disconnetti/Elimina */
+  --danger-hover: #dc2626;
+  
+  --text-main: #0f172a;       /* Testo scuro ben leggibile */
+  --text-muted: #64748b;      /* Testo secondario */
+  
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06); /* Ombra morbida moderna */
+  --transition: all 0.2s ease-in-out;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Plus Jakarta Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-  background-color: #0f172a;
-  color: #f8fafc;
+  background-color: var(--bg-main);
+  color: var(--text-main);
   min-height: 100vh;
+}
+
+/* ==========================================================
+   STILI PER BOX, PULSANTI E CAMPI (Applica la grafica pulita)
+   ========================================================== */
+
+/* Titoli principali e secondari */
+h1, h2, h3, h4 {
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+}
+
+/* Link (es. Torna al catalogo, Registrati) */
+a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+a:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
+
+/* Pulsanti con forma morbida e colori moderni */
+button, .btn, input[type="submit"] {
+  border-radius: var(--radius-md) !important;
+  font-weight: 600 !important;
+  border: none !important;
+  cursor: pointer;
+  transition: var(--transition) !important;
+  background-color: var(--primary) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.15);
+}
+
+button:hover, .btn:hover, input[type="submit"]:hover {
+  background-color: var(--primary-hover) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+/* Campi di testo e input */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+  background-color: var(--input-bg) !important;
+  border: 1px solid var(--card-border) !important;
+  border-radius: var(--radius-md) !important;
+  color: var(--text-main) !important;
+  transition: var(--transition);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--primary) !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12) !important;
+}
+
+::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 0.8;
+}
+
+/* Box / Card (Concerti, Form Login/Registrati, Profilo) */
+div[class*="card"], 
+div[class*="box"],
+form {
+  background-color: var(--card-bg) !important;
+  border: 1px solid var(--card-border) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+/* Testi dentro i box */
+p, span, label {
+  color: var(--text-muted);
 }

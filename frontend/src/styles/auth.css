@@ -7,79 +7,104 @@
 }
 
 .scheda-autenticazione {
-  background-color: #1e293b;
-  padding: 30px;
-  border-radius: 10px;
+  background-color: #ffffff;
+  padding: 32px 28px;
+  border-radius: 16px;
   width: 100%;
   max-width: 380px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
 }
 
 .scheda-autenticazione h2 {
   text-align: center;
-  margin-bottom: 20px;
-  color: #38bdf8;
+  margin-bottom: 22px;
+  color: #0f172a;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .campo {
-  margin-bottom: 15px;
+  margin-bottom: 16px;
 }
 
 .campo label {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
   font-size: 14px;
-  color: #cbd5e1;
+  font-weight: 600;
+  color: #475569;
 }
 
 .campo input {
   width: 100%;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #334155;
-  background-color: #0f172a;
-  color: #ffffff;
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background-color: #f8fafc;
+  color: #0f172a;
   font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
 .campo input:focus {
-  outline: none;
-  border-color: #38bdf8;
+  border-color: #2563eb;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.campo input::placeholder {
+  color: #94a3b8;
 }
 
 .scheda-autenticazione button {
   width: 100%;
-  padding: 10px;
-  background-color: #0284c7;
+  padding: 11px;
+  background-color: #2563eb;
   color: #ffffff;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   font-size: 15px;
-  font-weight: bold;
+  font-weight: 600;
   cursor: pointer;
   margin-top: 10px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.15);
 }
 
 .scheda-autenticazione button:hover {
-  background-color: #0369a1;
+  background-color: #1d4ed8;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
 }
 
 .testo-cambio {
   text-align: center;
-  margin-top: 15px;
-  font-size: 13px;
-  color: #94a3b8;
+  margin-top: 18px;
+  font-size: 13.5px;
+  color: #64748b;
 }
 
 .testo-cambio span {
-  color: #38bdf8;
+  color: #2563eb;
+  font-weight: 600;
   cursor: pointer;
+}
+
+.testo-cambio span:hover {
+  color: #1d4ed8;
   text-decoration: underline;
 }
 
 .messaggio-errore {
-  color: #f87171;
+  color: #ef4444;
   font-size: 13px;
-  margin-top: 8px;
+  font-weight: 500;
+  margin-top: 10px;
   text-align: center;
+  background-color: #fef2f2;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #fecaca;
 }
