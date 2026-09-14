@@ -1,0 +1,23 @@
+# ========================================================
+# Docker Compose - Concert App Orchestration
+# ========================================================
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: concert_app_backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./backend/.env
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+    networks:
+      - concert_network
+
+networks:
+  concert_network:
+    driver: bridge
