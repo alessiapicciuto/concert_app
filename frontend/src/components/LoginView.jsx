@@ -11,8 +11,8 @@ export default function LoginView({
   erroreLogin,
   setErroreLogin,
   handleLogin,
-  regNome,
-  setRegNome,
+  regUsername,
+  setRegUsername,
   regEmail,
   setRegEmail,
   regPassword,
@@ -69,13 +69,13 @@ export default function LoginView({
             <h2>REGISTRATI</h2>
             <form onSubmit={handleRegister}>
               <div className="campo">
-                <label>Nome</label>
+                <label>Username</label>
                 <input
                   type="text"
                   required
-                  placeholder="es.: Mario Rossi"
-                  value={regNome}
-                  onChange={function (e) { setRegNome(e.target.value); }}
+                  placeholder="es.: mario_rossi"
+                  value={regUsername}
+                  onChange={function (e) { setRegUsername(e.target.value); }}
                 />
               </div>
               <div className="campo">

@@ -57,15 +57,24 @@ app.use(express.json());
 
 app.post('/api/register', async (req, res) => {
   try {
-    const { name, email, username, password } = req.body;
-    const userEmail = email || username;
-    if (!name || !userEmail || !password) {
+    const { username, name, email, password } = req.body;
+    const userVal = username || name;
+    if (!userVal || !email || !password) {
       return res.status(400).json({ message: 'Tutti i campi sono obbligatori.' });
     }
 
-    const emailClean = String(userEmail).trim().toLowerCase();
-    const existingUser = await User.findOne({ email: emailClean });
-    if (existingUser) {
+    const usernameClean = String(userVal).trim().toLowerCase();
+    const emailClean = String(email).trim().toLowerCase();
+
+    // Controllo univocità Username
+    const existingUsername = await User.findOne({ username: usernameClean });
+    if (existingUsername) {
+      return res.status(400).json({ message: 'Username già in uso.' });
+    }
+
+    // Controllo univocità Email
+    const existingEmail = await User.findOne({ email: emailClean });
+    if (existingEmail) {
       return res.status(400).json({ message: 'Email già registrata.' });
     }
 
@@ -73,14 +82,15 @@ app.post('/api/register', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const newUser = await User.create({
-      name,
+      username: usernameClean,
+      name: userVal,
       email: emailClean,
       password: hashedPassword
     });
 
     res.status(201).json({ 
       message: 'Registrazione completata con successo', 
-      user: { id: newUser._id.toString(), name: newUser.name, email: newUser.email, username: newUser.email } 
+      user: { id: newUser._id.toString(), username: newUser.username, name: newUser.name, email: newUser.email } 
     });
   } catch (err) {
     res.status(500).json({ message: 'Errore interno del server.' });
@@ -123,7 +133,7 @@ app.post('/api/login', async (req, res) => {
       message: 'Accesso eseguito con successo', 
       accessToken, 
       refreshToken, 
-      user: { id: user._id.toString(), name: user.name, email: user.email, username: user.email } 
+      user: { id: user._id.toString(), username: user.username || user.name, name: user.name || user.username, email: user.email } 
     });
   } catch (err) {
     res.status(500).json({ message: 'Errore interno del server.' });

@@ -16,7 +16,7 @@ export default function LoginPage() {
   const [loginPassword, setLoginPassword] = useState('');
   const [erroreLogin, setErroreLogin] = useState('');
 
-  const [regNome, setRegNome] = useState('');
+  const [regUsername, setRegUsername] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [erroreRegistrazione, setErroreRegistrazione] = useState('');
@@ -45,7 +45,7 @@ export default function LoginPage() {
     fetch(`${API_URL}/api/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: regNome, email: regEmail, password: regPassword })
+      body: JSON.stringify({ username: regUsername, email: regEmail, password: regPassword })
     })
       .then(function (res) { return res.json().then(function (d) { return { ok: res.ok, d: d }; }); })
       .then(function (r) {
@@ -68,8 +68,8 @@ export default function LoginPage() {
       erroreLogin={erroreLogin}
       setErroreLogin={setErroreLogin}
       handleLogin={handleLogin}
-      regNome={regNome}
-      setRegNome={setRegNome}
+      regUsername={regUsername}
+      setRegUsername={setRegUsername}
       regEmail={regEmail}
       setRegEmail={setRegEmail}
       regPassword={regPassword}
