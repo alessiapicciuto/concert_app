@@ -1,5 +1,7 @@
 import { createContext, useState, useContext } from 'react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
 // crea il contesto
 const AuthContext = createContext();
 
@@ -56,7 +58,7 @@ export function AuthProvider({ children }) {
       }
 
       try {
-        const refreshRes = await fetch('http://localhost:3000/api/refresh-token', {
+        const refreshRes = await fetch(`${API_URL}/api/refresh-token`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ refreshToken: currentRefreshToken })
