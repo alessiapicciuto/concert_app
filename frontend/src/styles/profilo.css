@@ -77,7 +77,11 @@
 }
 
 /* Bottoni principali in alto: stessa larghezza, altezza e allineamento */
-.btn-azione {
+.btn-azione,
+.btn-azione:hover,
+.btn-azione:focus,
+.btn-azione:active,
+.btn-azione:visited {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -89,7 +93,7 @@
   border-radius: 10px;
   font-size: 13px;
   font-weight: 700;
-  text-decoration: none;
+  text-decoration: none !important;
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -100,24 +104,34 @@
   box-sizing: border-box;
   margin: 0 !important;
   white-space: nowrap;
+  outline: none !important;
 }
 
 .btn-azione:hover,
-.btn-azione:focus {
+.btn-azione:focus,
+.btn-azione:active {
   transform: translateY(-1px);
   color: #ffffff !important;
+  text-decoration: none !important;
+  outline: none !important;
 }
 
-.btn-offri {
+.btn-offri,
+.btn-offri:visited {
   background-color: #2563eb !important;
   color: #ffffff !important;
+  text-decoration: none !important;
+  outline: none !important;
   box-shadow: 0 2px 4px rgba(37, 99, 235, 0.15);
 }
 
 .btn-offri:hover,
-.btn-offri:focus {
+.btn-offri:focus,
+.btn-offri:active {
   background-color: #1d4ed8 !important;
   color: #ffffff !important;
+  text-decoration: none !important;
+  outline: none !important;
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
 }
 
