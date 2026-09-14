@@ -46,7 +46,13 @@ export default function ProfileView({
 
                 return (
                   <div key={idViaggio} className="scheda-viaggio-singolo">
-                    <div className="titolo-concerto">{t.concertName}</div>
+                    {t.concertId ? (
+                      <Link to={'/concert/' + t.concertId} className="titolo-concerto-link">
+                        {t.concertName} ↗
+                      </Link>
+                    ) : (
+                      <div className="titolo-concerto">{t.concertName}</div>
+                    )}
                     <div className="dettagli-viaggio">
                       Partenza da: {t.departureCity} | Ritrovo: {ritrovoVisualizzato} | Orario: {t.departureTime || '-'}
                       <br />
@@ -84,7 +90,13 @@ export default function ProfileView({
                 const idViaggio = t.id || t._id;
                 return (
                   <div key={idViaggio} className="scheda-viaggio-singolo">
-                    <div className="titolo-concerto">{t.concertName}</div>
+                    {t.concertId ? (
+                      <Link to={'/concert/' + t.concertId} className="titolo-concerto-link">
+                        {t.concertName} ↗
+                      </Link>
+                    ) : (
+                      <div className="titolo-concerto">{t.concertName}</div>
+                    )}
                     <div className="dettagli-viaggio">
                       Autista: {t.driverName} | Partenza da: {t.departureCity}
                       <br />

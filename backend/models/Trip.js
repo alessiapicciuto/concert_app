@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const tripSchema = new mongoose.Schema({
   driverId: { type: String, required: true },
   driverName: { type: String, required: true },
+  concertId: { type: String },
   concertName: { type: String, required: true },
   departureCity: { type: String, required: true },
   meetingPoint: { type: String, default: '' }, // Campo punto di ritrovo

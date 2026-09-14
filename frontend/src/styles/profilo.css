@@ -137,11 +137,25 @@
   border-radius: 12px;
 }
 
-.titolo-concerto {
-  color: #2563eb;
+.titolo-concerto,
+.titolo-concerto-link {
+  color: #2563eb !important;
   font-size: 16px;
   font-weight: 700;
   margin-bottom: 6px;
+  display: inline-block;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+}
+
+.titolo-concerto-link {
+  cursor: pointer;
+}
+
+.titolo-concerto-link:hover {
+  color: #1d4ed8 !important;
+  text-decoration: underline !important;
+  transform: translateX(2px);
 }
 
 .dettagli-viaggio {

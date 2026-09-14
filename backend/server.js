@@ -191,6 +191,7 @@ app.post('/api/trips', verifyToken, async (req, res) => {
     const { 
       driverId, 
       driverName, 
+      concertId,
       concertName, 
       departureCity, 
       meetingPoint, 
@@ -210,6 +211,7 @@ app.post('/api/trips', verifyToken, async (req, res) => {
     const newTrip = await Trip.create({
       driverId,
       driverName,
+      concertId: concertId || null,
       concertName,
       departureCity,
       meetingPoint: puntoRitrovoFinale,
@@ -231,6 +233,7 @@ app.put('/api/trips/:id', verifyToken, async (req, res) => {
   try {
     const tripId = req.params.id;
     const { 
+      concertId,
       concertName, 
       departureCity, 
       meetingPoint, 
@@ -243,16 +246,21 @@ app.put('/api/trips/:id', verifyToken, async (req, res) => {
 
     const puntoRitrovoFinale = meetingPoint || luogoRitrovo || ritrovo || '';
 
+    const updateData = { 
+      concertName, 
+      departureCity, 
+      meetingPoint: puntoRitrovoFinale, 
+      departureTime, 
+      availableSeats, 
+      pricePerSeat 
+    };
+    if (concertId) {
+      updateData.concertId = concertId;
+    }
+
     const updatedTrip = await Trip.findByIdAndUpdate(
       tripId,
-      { 
-        concertName, 
-        departureCity, 
-        meetingPoint: puntoRitrovoFinale, 
-        departureTime, 
-        availableSeats, 
-        pricePerSeat 
-      },
+      updateData,
       { new: true }
     );
 

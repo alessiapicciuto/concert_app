@@ -69,6 +69,14 @@ export default function TripsPage() {
       return;
     }
 
+    const concertoSelezionato = listaConcerti.find(function (c) {
+      const testo = ((c.title || c.artist) + ' (' + c.city + ')').toLowerCase();
+      const nomeInput = concertName.trim().toLowerCase();
+      const titoloConcerto = (c.title || c.artist || '').toLowerCase();
+      return testo === nomeInput || titoloConcerto === nomeInput || nomeInput.includes(titoloConcerto);
+    });
+    const foundConcertId = concertoSelezionato ? (concertoSelezionato.id || concertoSelezionato._id) : null;
+
     const url = editId
       ? `${API_URL}/api/trips/` + editId
       : `${API_URL}/api/trips`;
@@ -79,6 +87,7 @@ export default function TripsPage() {
       body: JSON.stringify({
         driverId: currentUser.id,
         driverName: currentUser.name,
+        concertId: foundConcertId,
         concertName: concertName,
         departureCity: departureCity,
         meetingPoint: meetingPoint,

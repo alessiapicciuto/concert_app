@@ -15,13 +15,35 @@ export default function ProfilePage() {
 
   const caricaViaggi = useCallback(function () {
     if (!currentUser) return;
-    fetch(`${API_URL}/api/trips`)
-      .then(function (res) { return res.json(); })
-      .then(function (trips) {
-        const creati = trips.filter(function (t) {
+
+    Promise.all([
+      fetch(`${API_URL}/api/trips`).then(function (res) { return res.json(); }),
+      fetch(`${API_URL}/api/concerts`).then(function (res) { return res.json(); }).catch(function () { return []; })
+    ])
+      .then(function ([trips, concerts]) {
+        const arricchisciViaggio = function (t) {
+          if (t.concertId) return t;
+          if (!concerts || concerts.length === 0) return t;
+
+          const tripName = (t.concertName || '').toLowerCase().trim();
+          const concertoTrovato = concerts.find(function (c) {
+            const titolo = (c.title || c.artist || '').toLowerCase().trim();
+            const formatDatalist = `${titolo} (${(c.city || '').toLowerCase().trim()})`;
+            return tripName === formatDatalist || tripName === titolo || tripName.includes(titolo) || titolo.includes(tripName);
+          });
+
+          return {
+            ...t,
+            concertId: concertoTrovato ? (concertoTrovato.id || concertoTrovato._id) : null
+          };
+        };
+
+        const tripsArricchiti = Array.isArray(trips) ? trips.map(arricchisciViaggio) : [];
+
+        const creati = tripsArricchiti.filter(function (t) {
           return String(t.driverId) === String(currentUser.id);
         });
-        const prenotati = trips.filter(function (t) {
+        const prenotati = tripsArricchiti.filter(function (t) {
           return t.passengers && t.passengers.some(function (p) {
             return String(p.userId) === String(currentUser.id);
           });
