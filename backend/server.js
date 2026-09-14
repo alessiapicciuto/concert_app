@@ -93,6 +93,14 @@ app.post('/api/register', async (req, res) => {
       user: { id: newUser._id.toString(), username: newUser.username, name: newUser.name, email: newUser.email } 
     });
   } catch (err) {
+    if (err.code === 11000) {
+      if (err.keyPattern && err.keyPattern.username) {
+        return res.status(400).json({ message: 'Username già in uso.' });
+      }
+      if (err.keyPattern && err.keyPattern.email) {
+        return res.status(400).json({ message: 'Email già registrata.' });
+      }
+    }
     res.status(500).json({ message: 'Errore interno del server.' });
   }
 });
