@@ -19,6 +19,9 @@ export default function TripsView({
   errore,
   handleSubmit
 }) {
+  // Ricaviamo un elenco unico di città dai concerti disponibili per il datalist delle partenze
+  const cittaDisponibili = Array.from(new Set(listaConcerti.map(function(c) { return c.city; })));
+
   return (
     <div className="trips-page">
       <div className="scheda-viaggio">
@@ -31,14 +34,16 @@ export default function TripsView({
               type="text"
               list="elenco-concerti"
               required
-              placeholder="es.: Dua Lipa"
+              placeholder="es.: Korn (Assago)"
               value={concertName}
               onChange={function (e) { setConcertName(e.target.value); }}
+              style={{ width: '100%', boxSizing: 'border-box' }}
             />
             <datalist id="elenco-concerti">
               {listaConcerti.map(function (c) {
+                const idConcerto = c.id || c._id;
                 const testo = (c.title || c.artist) + ' (' + c.city + ')';
-                return <option key={c.id || c._id} value={testo} />;
+                return <option key={idConcerto} value={testo} />;
               })}
             </datalist>
           </div>
@@ -47,11 +52,18 @@ export default function TripsView({
             <label>CITTA' DI PARTENZA</label>
             <input
               type="text"
+              list="elenco-citta"
               required
-              placeholder="es.: Bari"
+              placeholder="es.: Milano"
               value={departureCity}
               onChange={function (e) { setDepartureCity(e.target.value); }}
+              style={{ width: '100%', boxSizing: 'border-box' }}
             />
+            <datalist id="elenco-citta">
+              {cittaDisponibili.map(function (città, index) {
+                return <option key={index} value={città} />;
+              })}
+            </datalist>
           </div>
 
           <div className="campo">
@@ -80,7 +92,7 @@ export default function TripsView({
             <input
               type="number"
               min="1"
-              max="8"
+              max="6"
               required
               placeholder="es.: 3"
               value={availableSeats}

@@ -21,12 +21,6 @@ export default function ProfileView({
         {/* Scheda Profilo */}
         <div className="scheda">
           <h2>AREA PERSONALE</h2>
-          <div className="info-riga">
-            <strong>NOME:</strong> {currentUser.name}
-          </div>
-          <div className="info-riga">
-            <strong>EMAIL:</strong> {currentUser.email}
-          </div>
 
           <div className="box-azioni-profilo">
             <Link to="/trips" className="btn-azione btn-offri">

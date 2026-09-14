@@ -89,31 +89,38 @@
   transition: all 0.2s ease;
   cursor: pointer;
   border: none;
+  color: #ffffff !important;
 }
 
-.btn-azione:hover {
+.btn-azione:hover,
+.btn-azione:focus {
   transform: translateY(-1px);
+  color: #ffffff !important;
 }
 
 .btn-offri {
   background-color: #2563eb;
-  color: #ffffff;
+  color: #ffffff !important;
   box-shadow: 0 2px 4px rgba(37, 99, 235, 0.15);
 }
 
-.btn-offri:hover {
+.btn-offri:hover,
+.btn-offri:focus {
   background-color: #1d4ed8;
+  color: #ffffff !important;
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
 }
 
 .btn-prenota {
   background-color: #059669;
-  color: #ffffff;
+  color: #ffffff !important;
   box-shadow: 0 2px 4px rgba(5, 150, 105, 0.15);
 }
 
-.btn-prenota:hover {
+.btn-prenota:hover,
+.btn-prenota:focus {
   background-color: #047857;
+  color: #ffffff !important;
   box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
 }
 
@@ -143,7 +150,7 @@
   line-height: 1.5;
 }
 
-/* contenitore dei bottoni interni alle card (CENTRATI) */
+/* Contenitore dei bottoni interni alle card */
 .azioni-viaggio {
   margin-top: 14px;
   display: flex;
@@ -151,7 +158,6 @@
   justify-content: center;
 }
 
-/* Impedisce ai bottoni di occupare tutta la riga */
 .azioni-viaggio button {
   width: auto;
   flex: initial;
@@ -160,7 +166,7 @@
 /* Bottoni Modifica ed Elimina */
 .btn-modifica {
   background-color: #d97706;
-  color: #ffffff;
+  color: #ffffff !important;
   border: none;
   padding: 8px 16px;
   border-radius: 8px;
@@ -172,14 +178,16 @@
   box-shadow: 0 2px 4px rgba(217, 119, 6, 0.15);
 }
 
-.btn-modifica:hover {
+.btn-modifica:hover,
+.btn-modifica:focus {
   background-color: #b45309;
+  color: #ffffff !important;
   box-shadow: 0 4px 10px rgba(217, 119, 6, 0.25);
 }
 
 .btn-elimina {
   background-color: #ef4444;
-  color: #ffffff;
+  color: #ffffff !important;
   border: none;
   padding: 8px 16px;
   border-radius: 8px;
@@ -191,8 +199,10 @@
   box-shadow: 0 2px 4px rgba(239, 68, 68, 0.15);
 }
 
-.btn-elimina:hover {
+.btn-elimina:hover,
+.btn-elimina:focus {
   background-color: #dc2626;
+  color: #ffffff !important;
   box-shadow: 0 4px 10px rgba(239, 68, 68, 0.25);
 }
 
@@ -205,7 +215,7 @@
 
 .btn-logout {
   background-color: #ef4444;
-  color: #ffffff;
+  color: #ffffff !important;
   border: none;
   padding: 10px 24px;
   border-radius: 8px;
@@ -218,12 +228,14 @@
   box-shadow: 0 2px 4px rgba(239, 68, 68, 0.15);
 }
 
-.btn-logout:hover {
+.btn-logout:hover,
+.btn-logout:focus {
   background-color: #dc2626;
+  color: #ffffff !important;
   box-shadow: 0 4px 10px rgba(239, 68, 68, 0.25);
 }
 
-/* rimozione del bordo bianco intorno ai pulsanti crea viaggio o prenota viaggio */
+/* Pulizia bordi superflui */
 .scheda > div:not(.lista-viaggi):not(.scheda-viaggio-singolo),
 .scheda .box-logout-bottom {
   background-color: transparent !important;
@@ -232,7 +244,7 @@
   box-shadow: none !important;
   padding: 0 !important;
 }
-/* toglie il bordo intorno al bottone disconnetti */
+
 .box-logout-bottom,
 .btn-logout ~ *,
 div:has(> .btn-logout) {

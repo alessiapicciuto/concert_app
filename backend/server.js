@@ -57,15 +57,15 @@ app.use(express.json());
 
 app.post('/api/register', async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-    if (!name || !email || !password) {
+    const { name, username, password } = req.body;
+    if (!name || !username || !password) {
       return res.status(400).json({ message: 'Tutti i campi sono obbligatori.' });
     }
 
-    const emailClean = String(email).toLowerCase();
-    const existingUser = await User.findOne({ email: emailClean });
+    const usernameClean = String(username).trim().toLowerCase();
+    const existingUser = await User.findOne({ username: usernameClean });
     if (existingUser) {
-      return res.status(400).json({ message: 'Email già registrata.' });
+      return res.status(400).json({ message: 'Username già in uso.' });
     }
 
     const saltRounds = 10;
@@ -73,13 +73,13 @@ app.post('/api/register', async (req, res) => {
 
     const newUser = await User.create({
       name,
-      email: emailClean,
+      username: usernameClean,
       password: hashedPassword
     });
 
     res.status(201).json({ 
       message: 'Registrazione completata con successo', 
-      user: { id: newUser._id.toString(), name: newUser.name, email: newUser.email } 
+      user: { id: newUser._id.toString(), name: newUser.name, username: newUser.username } 
     });
   } catch (err) {
     res.status(500).json({ message: 'Errore interno del server.' });
@@ -88,13 +88,13 @@ app.post('/api/register', async (req, res) => {
 
 app.post('/api/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email e password sono obbligatorie.' });
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ message: 'Username e password sono obbligatori.' });
     }
 
-    const emailClean = String(email).toLowerCase();
-    const user = await User.findOne({ email: emailClean });
+    const usernameClean = String(username).trim().toLowerCase();
+    const user = await User.findOne({ username: usernameClean });
     
     if (!user) {
       return res.status(401).json({ message: 'Credenziali non valide.' });
@@ -106,13 +106,13 @@ app.post('/api/login', async (req, res) => {
     }
 
     const accessToken = jwt.sign(
-      { userId: user._id.toString(), email: user.email },
+      { userId: user._id.toString(), username: user.username },
       process.env.JWT_SECRET,
       { expiresIn: '20m' }
     );
 
     const refreshToken = jwt.sign(
-      { userId: user._id.toString(), email: user.email },
+      { userId: user._id.toString(), username: user.username },
       process.env.JWT_REFRESH_SECRET,
       { expiresIn: '7d' }
     );
@@ -121,7 +121,7 @@ app.post('/api/login', async (req, res) => {
       message: 'Accesso eseguito con successo', 
       accessToken, 
       refreshToken, 
-      user: { id: user._id.toString(), name: user.name, email: user.email } 
+      user: { id: user._id.toString(), name: user.name, username: user.username } 
     });
   } catch (err) {
     res.status(500).json({ message: 'Errore interno del server.' });
@@ -141,7 +141,7 @@ app.post('/api/refresh-token', (req, res) => {
     }
 
     const newAccessToken = jwt.sign(
-      { userId: user.userId, email: user.email },
+      { userId: user.userId, username: user.username },
       process.env.JWT_SECRET,
       { expiresIn: '20m' }
     );

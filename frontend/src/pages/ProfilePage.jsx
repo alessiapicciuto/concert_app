@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import ProfileView from '../components/ProfileView';
 import { useAuth } from '../context/AuthContext';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-
 export default function ProfilePage() {
   const navigate = useNavigate();
 
@@ -15,7 +13,7 @@ export default function ProfilePage() {
 
   const caricaViaggi = useCallback(function () {
     if (!currentUser) return;
-    fetch(`${API_URL}/api/trips`)
+    fetch('http://localhost:3000/api/trips')
       .then(function (res) { return res.json(); })
       .then(function (trips) {
         const creati = trips.filter(function (t) {
@@ -50,7 +48,7 @@ export default function ProfilePage() {
   function eliminaViaggio(idViaggio) {
     if (!window.confirm('Vuoi davvero cancellare questo viaggio?')) return;
 
-    authFetch(`${API_URL}/api/trips/` + idViaggio, {
+    authFetch('http://localhost:3000/api/trips/' + idViaggio, {
       method: 'DELETE'
     })
       .then(async function () { 
@@ -71,7 +69,7 @@ export default function ProfilePage() {
   function annullaPrenotazione(idViaggio) {
     if (!window.confirm('Vuoi davvero annullare la prenotazione di questo passaggio?')) return;
 
-    authFetch(`${API_URL}/api/trips/` + idViaggio + '/cancel-booking', {
+    authFetch('http://localhost:3000/api/trips/' + idViaggio + '/cancel-booking', {
       method: 'POST',
       body: JSON.stringify({ userId: currentUser.id })
     })
