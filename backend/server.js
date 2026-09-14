@@ -52,7 +52,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/concert_a
 
 app.use(cors(corsOptions));
 app.use(express.json());
-
+require('./swagger')(app);
 // ================= AUTENTICAZIONE =================
 
 app.post('/api/register', async (req, res) => {
