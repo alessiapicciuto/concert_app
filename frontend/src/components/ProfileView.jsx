@@ -62,7 +62,7 @@ export default function ProfileView({
             </Link>
             <button 
               type="button" 
-              className="btn-azione btn-prenota"
+              className={'btn-azione btn-prenota' + (mostraCercaPassaggio ? ' chiudi-attivo' : '')}
               onClick={function () { setMostraCercaPassaggio(!mostraCercaPassaggio); }}
             >
               {mostraCercaPassaggio ? '✕ CHIUDI RICERCA' : 'CERCA E PRENOTA UN PASSAGGIO'}

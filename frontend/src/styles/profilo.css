@@ -70,17 +70,24 @@
 .box-azioni-profilo {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 14px;
   margin-top: 24px;
   flex-wrap: wrap;
 }
 
-/* Bottoni principali in alto */
+/* Bottoni principali in alto: stessa larghezza, altezza e allineamento */
 .btn-azione {
-  display: inline-block;
-  padding: 12px 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 240px;
+  max-width: 270px;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
   border-radius: 10px;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 700;
   text-decoration: none;
   text-align: center;
@@ -90,6 +97,9 @@
   cursor: pointer;
   border: none;
   color: #ffffff !important;
+  box-sizing: border-box;
+  margin: 0 !important;
+  white-space: nowrap;
 }
 
 .btn-azione:hover,
@@ -99,29 +109,51 @@
 }
 
 .btn-offri {
-  background-color: #2563eb;
+  background-color: #2563eb !important;
   color: #ffffff !important;
   box-shadow: 0 2px 4px rgba(37, 99, 235, 0.15);
 }
 
 .btn-offri:hover,
 .btn-offri:focus {
-  background-color: #1d4ed8;
+  background-color: #1d4ed8 !important;
   color: #ffffff !important;
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
 }
 
 .btn-prenota {
-  background-color: #059669;
+  background-color: #2563eb !important;
   color: #ffffff !important;
-  box-shadow: 0 2px 4px rgba(5, 150, 105, 0.15);
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.15);
 }
 
 .btn-prenota:hover,
 .btn-prenota:focus {
-  background-color: #047857;
+  background-color: #1d4ed8 !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.btn-prenota.chiudi-attivo {
+  background-color: #475569 !important;
+  box-shadow: 0 2px 4px rgba(71, 85, 105, 0.15);
+}
+
+.btn-prenota.chiudi-attivo:hover,
+.btn-prenota.chiudi-attivo:focus {
+  background-color: #334155 !important;
+  box-shadow: 0 4px 12px rgba(71, 85, 105, 0.25);
+}
+
+@media (max-width: 580px) {
+  .box-azioni-profilo {
+    flex-direction: column;
+    align-items: center;
+  }
+  .box-azioni-profilo .btn-azione {
+    max-width: 100%;
+    width: 100%;
+  }
 }
 
 .lista-viaggi {
