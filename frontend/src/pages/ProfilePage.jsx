@@ -12,6 +12,8 @@ export default function ProfilePage() {
 
   const [myCreatedTrips, setMyCreatedTrips] = useState([]);
   const [myBookedTrips, setMyBookedTrips] = useState([]);
+  const [allConcerts, setAllConcerts] = useState([]);
+  const [allTrips, setAllTrips] = useState([]);
 
   const caricaViaggi = useCallback(function () {
     if (!currentUser) return;
@@ -21,12 +23,17 @@ export default function ProfilePage() {
       fetch(`${API_URL}/api/concerts`).then(function (res) { return res.json(); }).catch(function () { return []; })
     ])
       .then(function ([trips, concerts]) {
+        const concertList = Array.isArray(concerts) ? concerts : [];
+        const tripList = Array.isArray(trips) ? trips : [];
+        setAllConcerts(concertList);
+        setAllTrips(tripList);
+
         const arricchisciViaggio = function (t) {
           if (t.concertId) return t;
-          if (!concerts || concerts.length === 0) return t;
+          if (concertList.length === 0) return t;
 
           const tripName = (t.concertName || '').toLowerCase().trim();
-          const concertoTrovato = concerts.find(function (c) {
+          const concertoTrovato = concertList.find(function (c) {
             const titolo = (c.title || c.artist || '').toLowerCase().trim();
             const formatDatalist = `${titolo} (${(c.city || '').toLowerCase().trim()})`;
             return tripName === formatDatalist || tripName === titolo || tripName.includes(titolo) || titolo.includes(tripName);
@@ -38,7 +45,7 @@ export default function ProfilePage() {
           };
         };
 
-        const tripsArricchiti = Array.isArray(trips) ? trips.map(arricchisciViaggio) : [];
+        const tripsArricchiti = tripList.map(arricchisciViaggio);
 
         const creati = tripsArricchiti.filter(function (t) {
           return String(t.driverId) === String(currentUser.id);
@@ -121,6 +128,8 @@ export default function ProfilePage() {
       currentUser={currentUser}
       myCreatedTrips={myCreatedTrips}
       myBookedTrips={myBookedTrips}
+      allConcerts={allConcerts}
+      allTrips={allTrips}
       onModificaViaggio={modificaViaggio}
       onEliminaViaggio={eliminaViaggio}
       onAnnullaPrenotazione={annullaPrenotazione}
