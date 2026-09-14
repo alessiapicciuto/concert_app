@@ -45,7 +45,7 @@ export default function LoginPage() {
     fetch(`${API_URL}/api/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: regUsername, email: regEmail, password: regPassword })
+      body: JSON.stringify({ username: regUsername, name: regUsername, email: regEmail, password: regPassword })
     })
       .then(function (res) { return res.json().then(function (d) { return { ok: res.ok, d: d }; }); })
       .then(function (r) {
