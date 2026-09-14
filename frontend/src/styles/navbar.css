@@ -1,0 +1,70 @@
+/* ==========================================================================
+   NAVBAR & MENU UTENTE (DROPDOWN)
+   Gestisce il pulsante "Accedi / Registrati" e il menu a tendina "Ciao, [Nome]"
+   ========================================================================== */
+
+/* Contenitore relativo per posizionare il menu a tendina */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Pulsante principale del menu in alto a destra */
+.dropdown-btn {
+  background-color: #2563eb;
+  color: #ffffff !important;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-block;
+  text-decoration: none !important;
+}
+
+.dropdown-btn:hover,
+.dropdown-btn:focus,
+.dropdown-btn:active,
+.dropdown-btn:visited {
+  background-color: #1d4ed8;
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+
+/* Finestra a comparsa del menu dropdown */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  background-color: #ffffff;
+  min-width: 170px;
+  box-shadow: 0px 10px 25px -5px rgba(15, 23, 42, 0.12);
+  border-radius: 10px;
+  z-index: 10;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+/* Singole voci all'interno del menu dropdown */
+.dropdown-content a {
+  color: #0f172a;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.15s ease;
+}
+
+.dropdown-content a:hover {
+  background-color: #f1f5f9;
+  color: #2563eb;
+}
+
+/* Classe aggiunta dinamicamente in React per mostrare il menu quando aperto */
+.show {
+  display: block;
+}

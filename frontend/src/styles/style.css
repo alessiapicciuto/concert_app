@@ -1,3 +1,15 @@
+/* ==========================================================================
+   STYLE.CSS (MASTER / ARCHIVIO ORIGINALE COMPLETO)
+   NOTA DIDATTICA:
+   Per rendere lo studio del codice più semplice ed intuitivo, tutte le regole
+   di questo file sono state preservate e organizzate nei singoli file dedicati:
+   - navbar.css         -> Menu a tendina utente e pulsante Accedi/Registrati
+   - home.css           -> Catalogo principale, barra di ricerca e card concerti
+   - concert-detail.css -> Scheda del concerto e lista passaggi disponibili
+   - chat.css           -> Box messaggi, cronologia e input della chat
+   Tutte le righe originali sottostanti sono state mantenute al 100% per riferimento.
+   ========================================================================== */
+
 /* Layout globale contenitore */
 body {
   background-color: #f8fafc; 

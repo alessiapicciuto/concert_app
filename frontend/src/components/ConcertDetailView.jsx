@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import '../styles/style.css';
+import '../styles/concert-detail.css';
+import '../styles/chat.css';
 
 export default function ConcertDetailView({
   concert,

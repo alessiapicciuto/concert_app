@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import '../styles/style.css';
+import '../styles/navbar.css';
+import '../styles/home.css';
 
 export default function HomeView({
   currentUser,
