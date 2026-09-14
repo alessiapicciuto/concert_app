@@ -169,16 +169,13 @@ export default function ConcertDetailPage() {
 
         if (data.success) {
           const ultimoMessaggio = data.messages[data.messages.length - 1];
-          
-          const dataOggi = new Date().toLocaleDateString();
-          const dataOraCompleta = `${dataOggi} ${ultimoMessaggio.time}`;
 
           if (socketRef.current) {
             socketRef.current.emit('send_message', {
               tripId: 'trip_' + concertId,
               sender: mittente,
               text: testoPulito,
-              time: dataOraCompleta,
+              time: ultimoMessaggio.time,
               msgId: ultimoMessaggio.id
             });
           }

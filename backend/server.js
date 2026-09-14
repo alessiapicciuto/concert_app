@@ -411,8 +411,8 @@ app.post('/api/concerts/:id/messages', verifyToken, async (req, res) => {
     }
 
     const now = new Date();
-    const dataString = now.toLocaleDateString(); 
-    const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const dataString = now.toLocaleDateString('it-IT', { timeZone: 'Europe/Rome' }); 
+    const timeString = now.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Rome' });
 
     const nuovoMessaggio = {
       userName,
